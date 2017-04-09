@@ -1,5 +1,5 @@
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -36,12 +36,17 @@ public class AuthenticateServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		String address = request.getParameter("address");
 		HttpSession session = request.getSession();
+		int result;
 		if (session.getAttribute("userid")== null || session.getAttribute("userid") == ""){
-			address="/index.html";
-			request.setAttribute("error-message","invalid username or password. Please try again.");
+			request.setAttribute("result", 0);
+			result = 1;
+		}else{
+			request.setAttribute("result", 1);
+			result = 0;
 		}
-		System.out.println(address);
-		RequestDispatcher dispatcher = request.getRequestDispatcher(address);
-		dispatcher.forward(request, response);
+		request.setAttribute("address", address);
+		response.setCharacterEncoding("UTF-8"); 
+		response.setContentType("text/plain");
+		response.getWriter().print(result);
 	}
 }
