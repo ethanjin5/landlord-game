@@ -3,6 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+<script>
+$(function() {
+	var doneAuthenticate = 0;
+	if (!doneAuthenticate){
+	var form = document.createElement("form");
+	form.setAttribute("method", "post");
+	form.setAttribute("action", "AuthenticateServlet");
+	var hiddenField = document.createElement("input");
+	hiddenField.setAttribute("type", "hidden");
+	hiddenField.setAttribute("name", "address");
+	hiddenField.setAttribute("value", "/waitingroom.html");
+	form.appendChild(hiddenField);
+	document.body.appendChild(form);
+	form.submit();
+	}
+});
+</script>
 </head>
 <body>
 asdf

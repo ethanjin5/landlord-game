@@ -42,7 +42,6 @@ body {
 }
 
 .form-module .form {
-  display: none;
   padding: 40px;
 }
 .form-module .form:nth-child(2) {

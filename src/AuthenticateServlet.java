@@ -12,14 +12,14 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class StudentServlet
  */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/AuthenticateServlet")
+public class AuthenticateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public LoginServlet() {
+	public AuthenticateServlet() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -34,19 +34,13 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		String address = "";
-		User user;
+		String address = request.getParameter("address");
 		HttpSession session = request.getSession();
-		String username = request.getParameter("username");
-		String password = request.getParameter("password1");
-		if (User.login(username,password)) {
-			user = User.getUser(username);
-			session.setAttribute("userid", user.getUserid());
-			address = "/waitingroom.html";
-		} else {
-			address = "/index.html";
+		if (session.getAttribute("userid")== null || session.getAttribute("userid") == ""){
+			address="/index.html";
 			request.setAttribute("error-message","invalid username or password. Please try again.");
 		}
+		System.out.println(address);
 		RequestDispatcher dispatcher = request.getRequestDispatcher(address);
 		dispatcher.forward(request, response);
 	}

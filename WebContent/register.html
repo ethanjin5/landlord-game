@@ -24,15 +24,18 @@
 	<!-- Form Module-->
 	<div class="module form-module">
 		<div class="form">
-			<h2>Login to your account</h2>
-			<form method="post" action="LoginServlet">
-				<input type="text" placeholder="Username" name="username" />
-				<input type="password" placeholder="Password" name="password" />
-				<button>Login</button>
+			<h2>Create an account</h2>
+			<form method="post" action="RegisterServlet">
+				<input type="username" placeholder="Username" /> 
+				<input type="password1" placeholder="Password" />
+				<input type="password2" placeholder="Retype Password" />
+				<input type="email" placeholder="Email Address" />
+				<input type="phone" placeholder="Phone Number" />
+				<button>Register</button>
 			</form>
 		</div>
 		<div class="cta">
-			<a href="register.html">Not a User? Register Here</a>
+			<a href="index.html">Already a User? Login Here</a>
 		</div>
 	</div>
 	<script
