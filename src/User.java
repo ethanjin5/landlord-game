@@ -48,14 +48,16 @@ public class User {
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setString(1,username);
 			ResultSet res = stmt.executeQuery();
-			while (res.next()){
+			if (res.next()){
 				hashed = res.getString("password");
+			}else{
+				return false;
 			}
 			con.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		if (BCrypt.checkpw(password, hashed)){
+		if (!hashed.equals("") && !password.equals("") && BCrypt.checkpw(password, hashed)){
 			return true;
 		}
 		return false;

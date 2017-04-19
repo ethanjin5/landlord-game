@@ -38,14 +38,25 @@ public class LoginServlet extends HttpServlet {
 		User user;
 		HttpSession session = request.getSession();
 		String username = request.getParameter("username");
-		String password = request.getParameter("password1");
-		if (User.login(username,password)) {
+		String password = request.getParameter("password");
+		int loginAttempt = 0;
+		if (session.getAttribute("loginAttempt") != null){
+			loginAttempt = (int) session.getAttribute("loginAttempt");
+		}
+		if (loginAttempt <=3 && User.login(username,password)) {
 			user = User.getUser(username);
 			session.setAttribute("userid", user.getUserid());
-			address = "/waitingroom.html";
+			session.removeAttribute("loginAttempt");
+			address = "/waitingroom.jsp";
 		} else {
-			address = "/index.html";
-			request.setAttribute("error-message","invalid username or password. Please try again.");
+			address = "/index.jsp";
+			request.setAttribute("error","Invalid username or password. Please try again.");
+			if (session.getAttribute("loginAttempt")!=null){
+				session.setAttribute("loginAttempt", (int)session.getAttribute("loginAttempt")+1);
+			}else{
+				session.setAttribute("loginAttempt",1);
+				request.setAttribute("error","You are locked out, please contact the administrator.");
+			}
 		}
 		RequestDispatcher dispatcher = request.getRequestDispatcher(address);
 		dispatcher.forward(request, response);
