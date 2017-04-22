@@ -96,3 +96,12 @@ body {
   color: #333333;
   text-decoration: none;
 }
+
+/*
+ * Game Room CSS
+ */
+ body{width:99%; height:680px;}
+ #leftuser{background-color:#eee; width:30%; height:40%; float:left}
+ #rightuser{background-color:#eee; width:30%; height:40%; float:right}
+ #middleuser{background-color:#eee; width:30%; height:40%; margin:0 auto;}
+ #gamespace{background-color:yellow; width:80%; height:60%; margin:0 auto;}

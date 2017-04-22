@@ -28,12 +28,13 @@
 	<div class="module form-module">
 		<div class="form">
 			<h2>Create an account</h2>
-			<form method="post" action="RegisterServlet">
-				<input type="username" placeholder="Username" /> 
-				<input type="password1" placeholder="Password" />
-				<input type="password2" placeholder="Retype Password" />
-				<input type="email" placeholder="Email Address" />
-				<input type="phone" placeholder="Phone Number" />
+			<p>${error}</p>
+			<form method="post" action="RegServlet">
+				<input type="text" name="username" placeholder="Username" /> 
+				<input type="password" name="password1" placeholder="Password" />
+				<input type="password" name="password2" placeholder="Retype Password" />
+				<input type="text" name="email" placeholder="Email Address" />
+				<input type="text" name="phone" placeholder="Phone Number" />
 				<button>Register</button>
 			</form>
 		</div>
@@ -43,7 +44,6 @@
 	</div>
 	<script
 		src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-	<script src='http://codepen.io/andytran/pen/vLmRVp.js'></script>
 	<script src="js/index.js"></script>
 
 </body>

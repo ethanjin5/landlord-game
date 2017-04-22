@@ -8,18 +8,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Servlet implementation class StudentServlet
  */
-@WebServlet("/RegisterServlet")
-public class RegisterServlet extends HttpServlet {
+@WebServlet("/GameServlet")
+public class GameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public RegisterServlet() {
+	public GameServlet() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -34,24 +37,21 @@ public class RegisterServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		String address = "";
-		User user;
 		HttpSession session = request.getSession();
-		String username = request.getParameter("username");
-		String password1 = request.getParameter("password1");
-		String password2 = request.getParameter("password2");
-		String gender = request.getParameter("gender");
-		String email = request.getParameter("email");
-		if (User.register(username, password1, password2, gender, email)) {
-			user = User.getUser(username);
-			session.setAttribute("user", user);
-			address = "/waitingroom/";
-		} else {
-			address = "/register/";
-			request.setAttribute("error-message",
-					"unable to register, please try again");
-		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher(address);
-		dispatcher.forward(request, response);
+		//new Game
+		//assign users to Game - save in db game
+		//new Deck of Cards
+		//shuffle cards
+		//assign cards to user 1,2,3 - save in db game
+		//3 random cards left on top
+		//log cards in db log with game id
+		//return requesting user's cards, other other's cards count
+		
+		//requesting user's move: true/false
+		//request action: call landlord, pass
+		//if call landlord: do sth, path: do sth
+		//update game status, update request action from next user
+		
+		
 	}
 }

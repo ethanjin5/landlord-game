@@ -36,7 +36,7 @@
 			</form>
 		</div>
 		<div class="cta">
-			<a href="register.html">Not a User? Register Here</a>
+			<a href="register.jsp">Not a User? Register Here</a>
 		</div>
 	</div>
 	<script
