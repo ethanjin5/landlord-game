@@ -5,20 +5,48 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Landlord Game</title>
 <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
   crossorigin="anonymous"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel='stylesheet prefetch'
+	href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900|RobotoDraft:400,100,300,500,700,900'>
+<link rel='stylesheet prefetch'
+	href='http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'>
+
+<link rel="stylesheet" href="css/style.css">
+
 </head>
 <body>
 <%
 System.out.println(session.getAttribute("userid"));
-if(session.getAttribute("userid")==null || (int)session.getAttribute("userid")==0){
+System.out.println(session.getAttribute("username"));
+if(session.getAttribute("userid")==null && session.getAttribute("username")==null){
     session.setAttribute("error", "Please Login First");
     response.sendRedirect(response.encodeRedirectURL("index.jsp"));
 }
+String username = session.getAttribute("username").toString();
+int userid =  Integer.parseInt(session.getAttribute("userid").toString());
 %>
-asdf
+<div class="pen-title">
+		<h1>Landlord Game</h1>
+</div>
+Please click here to create a game room.
+<p>${error}</p>
+<div class="module form-module">
+		<div class="form">
+			<p>${error}</p>
+			<form method="post" action="RoomServlet">
+				<input type="hidden" id="userid" name="userid" value=${userid}>
+				<input type="hidden" id="username" name="username" value=${username}>
+				
+				<button>Create a game room</button>
+			</form>
+		</div>
+		
+	</div>
 </body>
 </html>
