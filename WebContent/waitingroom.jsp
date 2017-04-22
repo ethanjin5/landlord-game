@@ -22,26 +22,31 @@
 </head>
 <body>
 <%
-System.out.println(session.getAttribute("userid"));
-System.out.println(session.getAttribute("username"));
-if(session.getAttribute("userid")==null && session.getAttribute("username")==null){
+int userid;
+String error;
+String username;
+
+System.out.println("----------------"+session.getAttribute("userid"));
+System.out.println("----------------"+session.getAttribute("username"));
+if(session.getAttribute("userid")==null || session.getAttribute("username")==null){
     session.setAttribute("error", "Please Login First");
+    error = "Please Login First";
     response.sendRedirect(response.encodeRedirectURL("index.jsp"));
+}else{
+	username = session.getAttribute("username").toString();
+	userid =  Integer.parseInt(session.getAttribute("userid").toString());
 }
-String username = session.getAttribute("username").toString();
-int userid =  Integer.parseInt(session.getAttribute("userid").toString());
+
 %>
 <div class="pen-title">
 		<h1>Landlord Game</h1>
 </div>
 Please click here to create a game room.
-<p>${error}</p>
 <div class="module form-module">
 		<div class="form">
-			<p>${error}</p>
 			<form method="post" action="RoomServlet">
 				<input type="hidden" id="userid" name="userid" value=${userid}>
-				<input type="hidden" id="username" name="username" value=${username}>
+				<input type="hidden" id="username" name="username" value=${username}> 
 				
 				<button>Create a game room</button>
 			</form>
