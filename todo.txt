@@ -1,0 +1,15 @@
+registration
+	length format limit on username,email,phone
+user session management
+	implement session idle,absolute timeout
+	implement cookie attributes(on server with https)
+waiting room
+	add room
+	join room
+	delete room
+game
+	pick landlod
+	decide bet
+	input cards
+	determine winner
+

@@ -39,6 +39,10 @@ public class GameServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		//new Game
+		int user1 = 1;
+		int user2 = 2;
+		int user3 = 5;
+		Deck deck = new Deck();
 		//assign users to Game - save in db game
 		//new Deck of Cards
 		//shuffle cards

@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String address = "";
-		User user;
+		int userid;
 		HttpSession session = request.getSession();
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -44,8 +44,8 @@ public class LoginServlet extends HttpServlet {
 			loginAttempt = (int) session.getAttribute("loginAttempt");
 		}
 		if (loginAttempt <=3 && User.login(username,password)) {
-			user = User.getUser(username);
-			session.setAttribute("userid", user.getUserid());
+			userid = User.getUser(username);
+			session.setAttribute("userid", userid);
 			session.removeAttribute("loginAttempt");
 			address = "/waitingroom.jsp";
 		} else {
