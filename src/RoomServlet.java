@@ -1,6 +1,10 @@
 
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Arrays;
 
 import javax.servlet.RequestDispatcher;
@@ -19,8 +23,11 @@ public class RoomServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private int roomNumber = 0;
-	private String roomName = "room1";
+	private String roomName = "gameroom";
 	private Room room=null;
+	private int userId1;
+	private int userId2;
+	private int userId3;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -40,38 +47,106 @@ public class RoomServlet extends HttpServlet {
 			String address = "";
 		
 			String username=request.getParameter("username");
-			System.out.println("===========username: "+username);
+//			System.out.println("===========username: "+username);
 			int userid = Integer.parseInt(request.getParameter("userid"));
-			System.out.println("===========userid: "+userid);
+//			System.out.println("===========userid: "+userid);
 			User user1 = new User(userid,username,null,null);
+			System.out.println("===========roomNumber: "+roomNumber);
 			
-			if(roomNumber==0){
-				synchronized (this) {
-					room = new Room(roomNumber, roomName, user1);
-					roomNumber = roomNumber+1;
-					//rooms.put(room.getRoomId(), room);
-				}
-				address = "/gameroom.jsp";
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				Connection con = DriverManager
+						.getConnection(
+								"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+								"landlord", "admin");
+				String query = "select * from room";
+				PreparedStatement stmt = con.prepareStatement(query);
 				
-			}else if(roomNumber==1){
-				if(!room.isFull()){
+				ResultSet res = stmt.executeQuery();
+				if (res.next()){ //found room
+					roomNumber = res.getInt("roomid");
+					roomName = res.getString("roomname");
+					int userNumber = res.getInt("usernumber");
+					if(userNumber==3){
+						address = "/index.jsp";
+						request.setAttribute("error","Game room is full. Please come back later.");
+					}else if(userNumber==2){
+						synchronized (this) {
+							room.addPlayer(user1);
+							System.out.println("===========roomNumber: "+roomNumber);
+							String queryUpdate = "UPDATE room SET user3=?, usernumber=? where roomid=?";
+							PreparedStatement stmtUpdate = con.prepareStatement(queryUpdate);
+							stmtUpdate.setInt(1,userid);
+							stmtUpdate.setInt(2,3);
+							stmtUpdate.setInt(3,roomNumber);
+							
+							int countInsert = stmtUpdate.executeUpdate();
+							if (countInsert>0){ //succesfully added user into database
+								address = "/gameroom.jsp";
+							}else{
+								address = "/index.jsp";
+								request.setAttribute("error","Can not add you to the game room now. Please come back later.");
+							}
+							//rooms.put(room.getRoomId(), room);
+						}
+						
+						
+						
+					}else if(userNumber==1){
+						synchronized (this) {
+							room.addPlayer(user1);
+							System.out.println("===========roomNumber: "+roomNumber);
+							String queryUpdate = "UPDATE room SET user2=?, usernumber=? where roomid=?";
+							PreparedStatement stmtUpdate = con.prepareStatement(queryUpdate);
+							stmtUpdate.setInt(1,userid);
+							stmtUpdate.setInt(2,2);
+							stmtUpdate.setInt(3,roomNumber);
+							
+							int countInsert = stmtUpdate.executeUpdate();
+							if (countInsert>0){ //succesfully added user into database
+								address = "/gameroom.jsp";
+							}else{
+								address = "/index.jsp";
+								request.setAttribute("error","Can not add you to the game room now. Please come back later.");
+							}
+							//rooms.put(room.getRoomId(), room);
+						}
+						
+					}
+					con.close();
+					
+				}else{ //room is not found, create a new room
 					synchronized (this) {
-						room.addPlayer(user1);
+						room = new Room(roomNumber, roomName, user1);
+						roomNumber = roomNumber+1;
 						//rooms.put(room.getRoomId(), room);
 					}
-					address = "/gameroom.jsp";
-				}else{
-					address = "/index.jsp";
-					request.setAttribute("error","Game room is full. Please come back later.");
+					System.out.println("===========roomNumber: "+roomNumber);
+					String queryInsert = "INSERT INTO room (roomid,roomname,user1,user2,user3,usernumber) VALUES(?,?,?,?,?,?)";
+					PreparedStatement stmtInsert = con.prepareStatement(queryInsert);
+					stmtInsert.setInt(1,roomNumber);
+					stmtInsert.setString(2,roomName);
+					stmtInsert.setInt(3,userid);
+					stmtInsert.setInt(4,0);
+					stmtInsert.setInt(5,0);
+					stmtInsert.setInt(6,1);
+					int countInsert = stmtInsert.executeUpdate();
+					if (countInsert>0){ //succesfully added user into database
+						address = "/gameroom.jsp";
+					}else{
+						address = "/index.jsp";
+						request.setAttribute("error","Can not add game room now. Please come back later.");
+					}
+					
+					
+					
+					con.close();
 					
 				}
-				
-				
-			}else{
-				address = "/index.jsp";
-				request.setAttribute("error","No game room is available. Please come back later.");
-				
+			} catch (Exception e) {
+				System.out.println("Exception in getting the game room: "+e.toString());
 			}
+			
 			
 			RequestDispatcher dispatcher = request.getRequestDispatcher(address);
 			dispatcher.forward(request, response);
