@@ -1,10 +1,15 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 public class User {
 	private int userid;
 	private String username;
 	private String email;
 	private String phone;
+	private String myMove;
+	private ArrayList myCards;
+	private int myIndex;
+	
 
 	//constructor
 	public User(int userid, String username, String email, String phone) {
@@ -23,6 +28,27 @@ public class User {
 	}
 	public String getEmail(){
 		return this.email;
+	}
+	public String getMyMove() {
+		return myMove;
+	}
+	public int getMyIndex(){
+		return myIndex;
+	}
+	public void setMyIndex(int myIndex){
+		this.myIndex = myIndex;
+	}
+
+	public void setMyMove(String myMove) {
+		this.myMove = myMove;
+	}
+
+	public ArrayList getMyCards() {
+		return myCards;
+	}
+
+	public void setMyCards(ArrayList myCards) {
+		this.myCards = myCards;
 	}
 
 	//add user into database
@@ -132,6 +158,37 @@ public class User {
 			
 		} catch (Exception e) { //error - return 0
 			return 0;
+		}
+		
+	}
+	
+	public static User getUser(int userid) {
+		// get user fromm db by id
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager
+					.getConnection(
+							"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+							"landlord", "admin");
+			String query = "select * from users where id = ?";
+			PreparedStatement stmt = con.prepareStatement(query);
+			stmt.setInt(1,userid);
+			ResultSet res = stmt.executeQuery();
+			if (res.next()){ //user found
+				int id = res.getInt("id");
+				String username = res.getString("username");
+				String email = res.getString("email");
+				String phone = res.getString("phone");
+				User user = new User(id,username,email,phone);
+				con.close();
+				return user;
+			}else{ //user not found - return 0
+				con.close();
+				return null;
+			}
+			
+		} catch (Exception e) { //error - return 0
+			return null;
 		}
 		
 	}

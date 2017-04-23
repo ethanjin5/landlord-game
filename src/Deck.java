@@ -1,7 +1,13 @@
+import java.util.*;
 
 public class Deck {
-	private int[] cards;
+	private ArrayList cards = new ArrayList();
+	
+	
 	public Deck(){
-		this.cards= new int[52];
+		this.cards= new ArrayList();
+		
 	}
+	
+	
 }

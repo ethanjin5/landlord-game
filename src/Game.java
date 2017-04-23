@@ -1,46 +1,97 @@
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 public class Game {
 
 	private int id;
-	private int currentUser;
-	private int user1;
-	private int user2;
-	private int user3;
-	private String user1Cards;
-	private String user2Cards;
-	private String user3Cards;
-	private String winner;
-	private int landlord;
-	private String landlordCards;
-	public Game(int id, int currentUser, int user1, int user2, int user3,
-			String user1Cards, String user2Cards, String user3Cards,
-			String winner, int landlord, String landlordCards) {
-		super();
+	private int myUserIndex; //index in user list of the user
+	private int currentUserIndex; //current user who is making a move
+	private int bid; //bid amount
+	private String requestMove;
+	private String message;
+	private ArrayList <User> users; //list of users
+	private String winner; //winner of the game
+	private int landlordIndex; //landlord user
+	private ArrayList landlordCards; //landlord's three cards
+	
+	public Game(int id, int currentUserIndex, String requestMove, ArrayList<User> users,
+			String winner, int landlordIndex, ArrayList landlordCards) {
 		this.id = id;
-		this.currentUser = currentUser;
-		this.user1 = user1;
-		this.user2 = user2;
-		this.user3 = user3;
-		this.user1Cards = user1Cards;
-		this.user2Cards = user2Cards;
-		this.user3Cards = user3Cards;
+		this.currentUserIndex = currentUserIndex;
+		this.requestMove = requestMove;
+		this.users = users;
 		this.winner = winner;
-		this.landlord = landlord;
+		this.landlordIndex = landlordIndex;
 	}
-	public Game(int id, int currentUser, int user1, int user2, int user3,
-			String user1Cards, String user2Cards, String user3Cards,
-			int landlord, String landlordCards) {
-		super();
-		this.id = id;
-		this.currentUser = currentUser;
-		this.user1 = user1;
-		this.user2 = user2;
-		this.user3 = user3;
-		this.user1Cards = user1Cards;
-		this.user2Cards = user2Cards;
-		this.user3Cards = user3Cards;
-		this.landlord = landlord;
+	public Game(int currentUserIndex, String requestMove,String message, ArrayList<User> users, ArrayList landlordCarrds) {
+		this.currentUserIndex = currentUserIndex;
+		this.requestMove = requestMove;
+		this.message = message;
+		this.users = users;
+		this.landlordCards = landlordCards;
 	}
 	
+	public ArrayList getMyCards(){
+		return users.get(myUserIndex).getMyCards();
+	}
+	public int getMyUserIndex(){
+		return myUserIndex;
+	}
+	
+	public JSONObject toJson(){
+		JSONObject obj = new JSONObject();
+        obj.put("currentUserIndex", this.currentUserIndex);
+        obj.put("myUserIndex", getMyUserIndex());
+        obj.put("requeustMove", this.requestMove);
+        obj.put("message", this.message);
+        obj.put("myCards", users.get(myUserIndex).getMyCards().toString());
+        obj.put("user0CardCount", users.get(0).getMyCards().size());
+        obj.put("user1CardCount", users.get(1).getMyCards().size());
+        obj.put("user2CardCount", users.get(2).getMyCards().size());
+        obj.put("landlordUuser", landlordIndex);
+        obj.put("landlordCards", landlordCards.toString());
+        
+		return obj;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public int getCurrentUserIndex() {
+		return currentUserIndex;
+	}
+	public void setCurrentUserIndex(int index){
+		this.currentUserIndex = index;
+	}
+	public int getNextUserIndex(){
+		if (currentUserIndex ==2){
+			return 0;
+		}
+		return currentUserIndex+=1;
+	}
+	public String getRequestMove() {
+		return requestMove;
+	}
+	public String getWinner() {
+		return winner;
+	}
+	public int getLandlordIndex() {
+		return landlordIndex;
+	}
+	public void setLandlordIndex(int index){
+		this.landlordIndex = index;
+	}
+	public ArrayList getLandlordCards() {
+		return landlordCards;
+	}
+	public ArrayList getUsers(){
+		return this.users;
+	}
+	public void setRequestMove(String requestMove){
+		this.requestMove = requestMove;
+	}
 
 }

@@ -21,10 +21,11 @@ if(session.getAttribute("userid")==null || (int)session.getAttribute("userid")==
 %>
 <script>
 $(function(){
-	$.ajax({ url: "GameServlet", method="POST" })
-		  .done(function( data ) {
-		    alert( data );
-		  });
+	var menuId = 1;
+	$.ajax({ url: "GameServlet", method: "POST" })
+	.done(function(data){
+		console.log(data);
+	});
 })
 
 </script>

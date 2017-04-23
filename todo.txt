@@ -1,5 +1,6 @@
 registration
 	length format limit on username,email,phone
+	add description of strong password
 user session management
 	implement session idle,absolute timeout
 	implement cookie attributes(on server with https)
@@ -8,8 +9,12 @@ waiting room
 	join room
 	delete room
 game
+	use getters for reference in json object in toJson function
 	pick landlod
 	decide bet
 	input cards
 	determine winner
-
+	log all moves
+report
+	prove mysql is safe, libraries used are safe, no known vulnerbilities
+	shuffle must be random
