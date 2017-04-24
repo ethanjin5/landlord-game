@@ -20,13 +20,17 @@ if(session.getAttribute("userid")==null || (int)session.getAttribute("userid")==
 }
 %>
 <script>
-$(function(){
+
 	var menuId = 1;
-	$.ajax({ url: "GameServlet", method: "POST" })
+	setInterval(getUpdate, 3000); //get update every 3 seconds
+
+
+function getUpdate(){
+	$.ajax({ url: "GameServlet", method: "GET" })
 	.done(function(data){
 		console.log(data);
 	});
-})
+}
 
 </script>
 
@@ -39,6 +43,9 @@ User 3
 </div>
 <div id="middleuser">
 User 2
+</div>
+<div>
+	<input type="text" name="userInput" placeholder="Your Move:"/>
 </div>
 </body>
 </html>

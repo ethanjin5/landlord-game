@@ -50,7 +50,7 @@ public class RoomServlet extends HttpServlet {
 //			System.out.println("===========username: "+username);
 			int userid = Integer.parseInt(request.getParameter("userid"));
 //			System.out.println("===========userid: "+userid);
-			User user1 = new User(userid,username,null,null);
+			User user1 = User.getUser(userid);
 			System.out.println("===========roomNumber: "+roomNumber);
 			
 			try {

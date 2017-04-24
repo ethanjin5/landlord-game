@@ -8,6 +8,7 @@ waiting room
 	add room
 	join room
 	delete room
+	add userIndex to session after joining room
 game
 	use getters for reference in json object in toJson function
 	pick landlod

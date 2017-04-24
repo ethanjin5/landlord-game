@@ -9,14 +9,16 @@ public class User {
 	private String myMove;
 	private ArrayList myCards;
 	private int myIndex;
+	private int money;
 	
 
 	//constructor
-	public User(int userid, String username, String email, String phone) {
+	public User(int userid, String username, String email, String phone, int money) {
 		this.userid = userid;
 		this.username = username;
 		this.phone = phone;
 		this.email = email;
+		this.money = money;
 	}
 	
 	//getters for user attributes
@@ -42,6 +44,12 @@ public class User {
 	public void setMyMove(String myMove) {
 		this.myMove = myMove;
 	}
+	public int getNextUserIndex(){
+		if (myIndex ==2){
+			return 0;
+		}
+		return myIndex+=1;
+	}
 
 	public ArrayList getMyCards() {
 		return myCards;
@@ -49,6 +57,12 @@ public class User {
 
 	public void setMyCards(ArrayList myCards) {
 		this.myCards = myCards;
+	}
+	public int getMoney(){
+		return this.money;
+	}
+	public void setMoney(int money){
+		this.money = money;
 	}
 
 	//add user into database
@@ -179,7 +193,8 @@ public class User {
 				String username = res.getString("username");
 				String email = res.getString("email");
 				String phone = res.getString("phone");
-				User user = new User(id,username,email,phone);
+				int money = res.getInt("money");
+				User user = new User(id,username,email,phone,money);
 				con.close();
 				return user;
 			}else{ //user not found - return 0

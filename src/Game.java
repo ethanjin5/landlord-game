@@ -7,7 +7,6 @@ import org.json.JSONObject;
 public class Game {
 
 	private int id;
-	private int myUserIndex; //index in user list of the user
 	private int currentUserIndex; //current user who is making a move
 	private int bid; //bid amount
 	private String requestMove;
@@ -26,7 +25,7 @@ public class Game {
 		this.winner = winner;
 		this.landlordIndex = landlordIndex;
 	}
-	public Game(int currentUserIndex, String requestMove,String message, ArrayList<User> users, ArrayList landlordCarrds) {
+	public Game(int currentUserIndex, String requestMove,String message, ArrayList<User> users, ArrayList landlordCards) {
 		this.currentUserIndex = currentUserIndex;
 		this.requestMove = requestMove;
 		this.message = message;
@@ -35,25 +34,21 @@ public class Game {
 	}
 	
 	public ArrayList getMyCards(){
-		return users.get(myUserIndex).getMyCards();
-	}
-	public int getMyUserIndex(){
-		return myUserIndex;
+		return users.get(currentUserIndex).getMyCards();
 	}
 	
-	public JSONObject toJson(){
+	public JSONObject toJson( int userIndex){
 		JSONObject obj = new JSONObject();
         obj.put("currentUserIndex", this.currentUserIndex);
-        obj.put("myUserIndex", getMyUserIndex());
+        obj.put("myUserIndex", userIndex);
         obj.put("requeustMove", this.requestMove);
         obj.put("message", this.message);
-        obj.put("myCards", users.get(myUserIndex).getMyCards().toString());
+        obj.put("myCards", users.get(userIndex).getMyCards().toString());
         obj.put("user0CardCount", users.get(0).getMyCards().size());
         obj.put("user1CardCount", users.get(1).getMyCards().size());
         obj.put("user2CardCount", users.get(2).getMyCards().size());
-        obj.put("landlordUuser", landlordIndex);
+        obj.put("landlordIndex", landlordIndex);
         obj.put("landlordCards", landlordCards.toString());
-        
 		return obj;
 	}
 	
@@ -92,6 +87,36 @@ public class Game {
 	}
 	public void setRequestMove(String requestMove){
 		this.requestMove = requestMove;
+	}
+	public int getBid(){
+		return this.bid;
+	}
+	public void setBid(int bid){
+		this.bid = bid;
+	}
+	public boolean hasNextUserMove(){ //check if other two users both passed
+		int nextIndex= getNextUserIndex();
+		User nextUser = users.get(nextIndex);
+		int nextnextIndex = nextUser.getNextUserIndex();
+		if (users.get(nextIndex).getMyMove().equals("Pass") 
+				&& users.get(nextnextIndex).getMyMove().equals("Pass")){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	public int getNextUserMoveIndex(){ //get next user index who did not pass
+		for(int i=getCurrentUserIndex();i<=users.size();i++){
+			if(users.get(i).getMyMove().equals("Pass")){
+				if (i==2){
+					i=0;
+				}
+				continue;
+			}else{
+				return i;
+			}
+		}
+		return -1; 
 	}
 
 }

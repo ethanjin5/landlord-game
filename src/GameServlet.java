@@ -34,25 +34,18 @@ public class GameServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		int error =0;
-		String error_message= "";
+		int userIndex = 1;  // set to -1, currently 1 for testing
+		if (session.getAttribute("userIndex")!= null && session.getAttribute("userIndex") != ""){
+			userIndex = (int)session.getAttribute("userIndex");
+		}
 		
-		
-		if (myGame==null){ //initialize game
-			ArrayList <User>users = new ArrayList<User>();
-			//hard coded users
-			users.add( User.getUser(1) );
-			users.add( User.getUser(2) );
-			users.add( User.getUser(5) );
+		ArrayList <User>users = new ArrayList<User>();
+		//hard coded users
+		users.add( User.getUser(1) );
+		users.add( User.getUser(2) );
+		users.add( User.getUser(5) );
+		if (myGame==null && users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
 			ArrayList cards = new ArrayList(); // create a list of number for cards
 			for (int i = 1; i<=54; i++){
 				cards.add(i); //add number as cards into array
@@ -84,16 +77,52 @@ public class GameServlet extends HttpServlet {
 			users.get(2).setMyIndex(2);
 			
 			myGame = new Game(0,"pickLandlord","message for picking landlord",users,landlordCards);
-		}else if(myGame.getRequestMove().equals("pickLandlord")){
+		}else{
+			response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+		    response.getWriter().write(myGame.toJson(userIndex).toString());
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		int userIndex = 1;  // set to -1, currently 1 for testing
+		if (session.getAttribute("userIndex")!= null && session.getAttribute("userIndex") != ""){
+			userIndex = (int)session.getAttribute("userIndex");
+		}
+		int error =0; //initialize error variable with 0 - no error
+		String error_message= "";
+		ArrayList <User>users = new ArrayList<User>();
+		//hard coded users
+		users.add( User.getUser(1) );
+		users.add( User.getUser(2) );
+		users.add( User.getUser(5) );
+		if(myGame.getRequestMove().equals("pickLandlord")){
 			if (request.getParameter("userInput")!=null){
 				String userInput = request.getParameter("userInput");
-				
-				ArrayList<User> users = myGame.getUsers();
-				User myUser = (User)myGame.getUsers().get(myGame.getMyUserIndex());
-				if (userInput.equals("call")){
+				User myUser = (User)myGame.getUsers().get(myGame.getCurrentUserIndex());
+				if (userInput.equals("Call")){
 					myUser.setMyMove(userInput);
 					myGame.setLandlordIndex(myUser.getMyIndex());
-				}else if(userInput.matches("^.*[0-9].*$")){
+				}else if(userInput.equals("bid * 2") || userInput.equals("bid * 3")){
+					if (myUser.getMyMove().equals("Call")){
+						if (userInput.equals("bid * 2") && myUser.getMoney()>=myGame.getBid()*2){
+							myGame.setBid(myGame.getBid()*2);
+						}else if (userInput.equals("bid * 3") && myUser.getMoney()>=myGame.getBid()*2){
+							myGame.setBid(myGame.getBid()*3);
+						}else{ //not enough money
+							error = 1;
+							error_message = "You don't have enough money to bid this high";
+						}
+					}else{
+						error = 1;
+						error_message = "You need to call landlord to bidz";
+					}
 					myUser.setMyMove(userInput);
 				}else if(userInput.equals("Pass")){
 					myUser.setMyMove(userInput);
@@ -103,33 +132,25 @@ public class GameServlet extends HttpServlet {
 				}
 				if (error!=1){//valid input, move on to next User
 					//all three user passed
-					if (users.get(0).getMyMove().equals("Pass") && users.get(1).getMyMove().equals("Pass")
-							&& users.get(2).getMyMove().equals("Pass")){
+					if (myGame.hasNextUserMove()){//next user to pick landlord or increase bid
+						myGame.setCurrentUserIndex(myGame.getNextUserIndex());
+					}
+					else{ //pick landlord and bid phase over. continue to next phase
 						myGame.setRequestMove("pickCard");
-					}else{
-						for(int i=myGame.getMyUserIndex();i<=users.size();i++){	
-							if(users.get(i).getMyMove().equals("Pass")){
-								continue;
-							}else if (users.get(i).getMyMove().equals("call")){
-								for( int j = myGame.getCurrentUserIndex()+1; j<users.size();j++){
-									if (!users.get(j).equals("Pass")){
-										myGame.setCurrentUserIndex(j);
-									}
-									if (j==2){ //set index back to start at 0
-										j=0;
-									}
-								}
-							}
-						}
 					}
 				}
+			}else{ //input is null
+				error = 1;
+				error_message="Invalid Input";
 			}
+		}else if(myGame.getRequestMove().equals("pickLandlord")){
+			//drawing cards, etc
 		}
 
 		response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
-	    if (error!=1){
-	    	response.getWriter().write(myGame.toJson().toString());
+	    if (error!=1 && userIndex != -1){
+	    	response.getWriter().write(myGame.toJson(userIndex).toString());
 	    }else{
 	    	JSONObject result = new JSONObject();
 	    	result.put("error", error);
