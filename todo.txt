@@ -11,11 +11,13 @@ waiting room
 	add userIndex to session after joining room
 game
 	use getters for reference in json object in toJson function
-	pick landlod
+	checks to validate input, validate if correct user's turn
+	pick landlord
 	decide bet
 	input cards
 	determine winner
 	log all moves
+	timeout for user to make moves
 report
-	prove mysql is safe, libraries used are safe, no known vulnerbilities
+	prove mysql is safe, libraries used are safe, no known vulnerabilities
 	shuffle must be random
