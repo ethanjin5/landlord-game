@@ -1,23 +1,23 @@
 registration
-	length format limit on username,email,phone
-	add description of strong password
+m	length format limit on username,email,phone
+m	add description of strong password
 user session management
-	implement session idle,absolute timeout
-	implement cookie attributes(on server with https)
+m	implement session idle,absolute timeout
+m	implement cookie attributes(on server with https)
 waiting room
-	add room
-	join room
-	delete room
-	add userIndex to session after joining room
+m	add userIndex to session after joining room
 game
-	use getters for reference in json object in toJson function
-	checks to validate input, validate if correct user's turn
-	pick landlord
-	decide bet
-	input cards
-	determine winner
-	log all moves
-	timeout for user to make moves
+f	use getters for reference in json object in toJson function
+f	checks to validate input, validate if correct user's turn
+f	pick landlord
+f	decide bet
+f	input cards
+f	determine winner
+f	log all moves
+f	timeout for user to make moves
+user status
+m	see the win/loss statistics of themselves and others
+m	interface for user to view stats and game stats, see game moves of completed games
 report
-	prove mysql is safe, libraries used are safe, no known vulnerabilities
-	shuffle must be random
+m	prove mysql is safe, libraries used are safe, no known vulnerabilities
+m	shuffle must be random
