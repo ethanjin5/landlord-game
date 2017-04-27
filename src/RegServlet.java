@@ -57,7 +57,7 @@ public class RegServlet extends HttpServlet {
 			address="/register.jsp";
 		}else if(password1.length()<10 || !password1.matches(pattern1) || !password1.matches(pattern2)
 				|| !password1.matches(pattern3) || !password1.matches(pattern4)){ //check if password is strong
-			request.setAttribute("error","Password does not meet minimum requirements");
+			request.setAttribute("error","Password does not meet minimum requirements: must be at least 10 characters including uppercase and lowercase letters, special and alphanumeric characters.");
 			address="/register.jsp";
 		}else{
 			if (User.register(username, password1, password2, email, phone)) { //register user into database
