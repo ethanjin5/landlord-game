@@ -1,11 +1,11 @@
 registration
 m	length format limit on username,email,phone
-m	add description of strong password
+m	add description of strong password (done)
 user session management
 m	implement session idle,absolute timeout
 m	implement cookie attributes(on server with https)
 waiting room
-m	add userIndex to session after joining room
+m	add userIndex to session after joining room (done)
 game
 f	use getters for reference in json object in toJson function
 f	checks to validate input, validate if correct user's turn
