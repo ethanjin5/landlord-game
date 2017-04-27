@@ -84,11 +84,12 @@ public class RoomServlet extends HttpServlet {
 						
 							synchronized (this) {
 								room.addPlayer(user1);
-								String queryUpdate = "UPDATE room SET user3=?, usernumber=? where roomid=?";
+								String queryUpdate = "UPDATE room SET user3=?, user1Index=?, usernumber=? where roomid=?";
 								PreparedStatement stmtUpdate = con.prepareStatement(queryUpdate);
 								stmtUpdate.setInt(1,userid);
-								stmtUpdate.setInt(2,3);
-								stmtUpdate.setInt(3,roomNumber);
+								stmtUpdate.setInt(2,2);
+								stmtUpdate.setInt(3,3);
+								stmtUpdate.setInt(4,roomNumber);
 
 								int countInsert = stmtUpdate.executeUpdate();
 								if (countInsert>0){ //succesfully added user into database
@@ -105,11 +106,12 @@ public class RoomServlet extends HttpServlet {
 						}else if(userNumber==1){
 							synchronized (this) {
 								room.addPlayer(user1);
-								String queryUpdate = "UPDATE room SET user2=?, usernumber=? where roomid=?";
+								String queryUpdate = "UPDATE room SET user2=?, user2Index=?, usernumber=? where roomid=?";
 								PreparedStatement stmtUpdate = con.prepareStatement(queryUpdate);
 								stmtUpdate.setInt(1,userid);
-								stmtUpdate.setInt(2,2);
-								stmtUpdate.setInt(3,roomNumber);
+								stmtUpdate.setInt(2,1);
+								stmtUpdate.setInt(3,2);
+								stmtUpdate.setInt(4,roomNumber);
 
 								int countInsert = stmtUpdate.executeUpdate();
 								if (countInsert>0){ //succesfully added user into database
@@ -133,14 +135,17 @@ public class RoomServlet extends HttpServlet {
 						roomNumber = roomNumber+1;
 						//rooms.put(room.getRoomId(), room);
 					}
-					String queryInsert = "INSERT INTO room (roomid,roomname,user1,user2,user3,usernumber) VALUES(?,?,?,?,?,?)";
+					String queryInsert = "INSERT INTO room (roomid,roomname,user1,user2,user3,user1Index,user2Index,user3Index,usernumber) VALUES(?,?,?,?,?,?,?,?,?)";
 					PreparedStatement stmtInsert = con.prepareStatement(queryInsert);
 					stmtInsert.setInt(1,roomNumber);
 					stmtInsert.setString(2,roomName);
 					stmtInsert.setInt(3,userid);
-					stmtInsert.setInt(4,0);
-					stmtInsert.setInt(5,0);
-					stmtInsert.setInt(6,1);
+					stmtInsert.setInt(4,-1);
+					stmtInsert.setInt(5,-1);
+					stmtInsert.setInt(6,0);
+					stmtInsert.setInt(7,-1);
+					stmtInsert.setInt(8,-1);
+					stmtInsert.setInt(9,1);
 					int countInsert = stmtInsert.executeUpdate();
 					if (countInsert>0){ //succesfully added room into database
 						address = "/gameroom.jsp";
