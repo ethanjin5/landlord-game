@@ -43,7 +43,7 @@ public class RoomServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-			
+			HttpSession session = request.getSession();
 			String address = "";
 		
 			String username=request.getParameter("username");
@@ -51,7 +51,7 @@ public class RoomServlet extends HttpServlet {
 			int userid = Integer.parseInt(request.getParameter("userid"));
 //			System.out.println("===========userid: "+userid);
 			User user1 = User.getUser(userid);
-			System.out.println("===========roomNumber: "+roomNumber);
+			System.out.println("===========userId: "+userid);
 			
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
@@ -71,15 +71,19 @@ public class RoomServlet extends HttpServlet {
 					int userid2 = res.getInt("user2");
 					int userid3 = res.getInt("user3");
 					if(userid == userid1 || userid == userid2 || userid == userid3){
+						if (userid == userid1){
+							session.setAttribute("myIndex", 0);
+						}else if(userid == userid2){
+							session.setAttribute("myIndex", 1);
+						}else{
+							session.setAttribute("myIndex", 2);
+						}
 						System.out.println("Welcome back to the game: "+username);
 						address = "/gameroom.jsp";
 					}else{
 						if(userNumber==3){
-							
-							address = "/index.jsp";
+							address = "/waitingroom.jsp";
 							request.setAttribute("error","Game room is full. Please come back later.");
-						
-						
 						}else if(userNumber==2){
 						
 							synchronized (this) {
@@ -94,8 +98,9 @@ public class RoomServlet extends HttpServlet {
 								int countInsert = stmtUpdate.executeUpdate();
 								if (countInsert>0){ //succesfully added user into database
 									address = "/gameroom.jsp";
+									session.setAttribute("myIndex", 2);
 								}else{
-									address = "/index.jsp";
+									address = "/waitingroom.jsp";
 									request.setAttribute("error","Can not add you to the game room now. Please come back later.");
 								}
 								
@@ -116,8 +121,9 @@ public class RoomServlet extends HttpServlet {
 								int countInsert = stmtUpdate.executeUpdate();
 								if (countInsert>0){ //succesfully added user into database
 									address = "/gameroom.jsp";
+									session.setAttribute("myIndex", 1);
 								}else{
-									address = "/index.jsp";
+									address = "/waitingroom.jsp";
 									request.setAttribute("error","Can not add you to the game room now. Please come back later.");
 								}
 								//rooms.put(room.getRoomId(), room);
@@ -149,6 +155,7 @@ public class RoomServlet extends HttpServlet {
 					int countInsert = stmtInsert.executeUpdate();
 					if (countInsert>0){ //succesfully added room into database
 						address = "/gameroom.jsp";
+						session.setAttribute("myIndex", 0);
 					}else{
 						address = "/index.jsp";
 						request.setAttribute("error","Can not add game room now. Please come back later.");

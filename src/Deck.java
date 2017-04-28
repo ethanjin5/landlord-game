@@ -18,6 +18,9 @@ public class Deck {
 		this.cards.add(new Card("J","LJ",14)); //Little Joker
 		this.cards.add(new Card("J","BJ",15)); //Big Joker
 	}
+	public ArrayList<Card> getCards(){
+		return this.cards;
+	}
 	
 	public void shuffle(){
 		Collections.shuffle(this.cards);

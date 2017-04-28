@@ -12,7 +12,7 @@ public class User {
 	private int money;
 	
 
-	//constructor
+	//constructor for creating an user object
 	public User(int userid, String username, String email, String phone, int money) {
 		this.userid = userid;
 		this.username = username;
@@ -37,21 +37,21 @@ public class User {
 	public int getMyIndex(){
 		return myIndex;
 	}
-	public void setMyIndex(int myIndex){
+	public void setMyIndex(int myIndex){//my index of the three users
 		this.myIndex = myIndex;
 	}
 
-	public void setMyMove(String myMove) {
+	public void setMyMove(String myMove) { //the move I input(only valid input)
 		this.myMove = myMove;
 	}
 	public int getNextUserIndex(){
 		if (myIndex ==2){
 			return 0;
 		}
-		return myIndex+=1;
+		return myIndex+1;
 	}
 
-	public ArrayList getMyCards() {
+	public ArrayList getMyCards() { //user's current cards
 		return myCards;
 	}
 
