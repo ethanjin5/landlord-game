@@ -16,6 +16,7 @@ public class Game {
 	private String winner; //winner of the game
 	private int landlordIndex; //landlord user
 	private ArrayList landlordCards; //landlord's three cards
+	private GameClient gameclient;
 	
 	public Game(int id, int currentUserIndex, String requestMove, ArrayList<User> users,
 			String winner, int landlordIndex, ArrayList landlordCards) {
@@ -33,6 +34,14 @@ public class Game {
 		this.tip = tip;
 		this.users = users;
 		this.landlordCards = landlordCards;
+	}
+	
+	public void setGameClient(GameClient gameclient){
+		this.gameclient = gameclient;
+	}
+	
+	public GameClient getGameClient(){
+		return this.gameclient;
 	}
 	
 	public ArrayList getMyCards(){

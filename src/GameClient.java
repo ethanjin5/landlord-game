@@ -6,6 +6,15 @@ public class GameClient {
 	
 	private String currentHand;
 	private ArrayList<Card> currentCards;
+	private Deck deck;
+	
+	public GameClient(){
+		this.deck = new Deck();
+		this.deck.shuffle();
+	}
+	public Deck getDeck(){
+		return this.deck;
+	}
 	
 	public void setCurrentHand(ArrayList<Card> cards){ // use Deck.isValidHand to validate cards before setting
 		if (Deck.isSingle(cards)){

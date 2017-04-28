@@ -46,25 +46,24 @@ public class GameServlet extends HttpServlet {
 		users.add( User.getUser(2) );
 		users.add( User.getUser(5) );
 		if (myGame==null && users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
-			Deck deck = new Deck(); // create a list of number for cards
-			deck.shuffle(); //shuffle the cards
+			GameClient gameclient = new GameClient();
 			ArrayList user1Cards = new ArrayList();
 			ArrayList user2Cards = new ArrayList();
 			ArrayList user3Cards = new ArrayList();
 			ArrayList landlordCards = new ArrayList();
 	
-			for (int i = deck.getCards().size()-3-1; i >= 0; i--){ //assign 17 cards for each user. leave 3 for landlord
-			    user1Cards.add(deck.getCards().get(i));
-			    deck.getCards().remove(i);
+			for (int i = gameclient.getDeck().getCards().size()-3-1; i >= 0; i--){ //assign 17 cards for each user. leave 3 for landlord
+			    user1Cards.add(gameclient.getDeck().getCards().get(i));
+			    gameclient.getDeck().getCards().remove(i);
 			    i--;
-			    user2Cards.add(deck.getCards().get(i));
-			    deck.getCards().remove(i);
+			    user2Cards.add(gameclient.getDeck().getCards().get(i));
+			    gameclient.getDeck().getCards().remove(i);
 			    i--;
-			    user3Cards.add(deck.getCards().get(i));
-			    deck.getCards().remove(i);
+			    user3Cards.add(gameclient.getDeck().getCards().get(i));
+			    gameclient.getDeck().getCards().remove(i);
 			}
-			for (int i =0; i<deck.getCards().size(); i++){ //three landlord cards saved for whoever picked landlord
-				landlordCards.add(deck.getCards().get(i));
+			for (int i =0; i<gameclient.getDeck().getCards().size(); i++){ //three landlord cards saved for whoever picked landlord
+				landlordCards.add(gameclient.getDeck().getCards().get(i));
 			}
 			users.get(0).setMyCards(user1Cards);
 			users.get(1).setMyCards(user2Cards);
@@ -74,6 +73,7 @@ public class GameServlet extends HttpServlet {
 			users.get(2).setMyIndex(2);
 			
 			myGame = new Game(0,"pickLandlord","Please call to be the landlord!","Available inputs includes \"Call\" and \"Pass\"",users,landlordCards);
+			myGame.setGameClient(gameclient);
 		}else{
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
@@ -95,9 +95,8 @@ public class GameServlet extends HttpServlet {
 		int error =0; //initialize error variable with 0 - no error
 		//hard coded users
 		if(myGame.getRequestMove().equals("pickLandlord")){
-			if (request.getParameter("userInput")!=null){
+			if (request.getParameter("userInput")!=null && userIndex == myGame.getCurrentUserIndex()){
 				String userInput = request.getParameter("userInput");
-				System.out.println(userInput);
 				User myUser = (User)myGame.getUsers().get(userIndex);
 				if (userInput.equals("Call")){
 					myUser.setMyMove(userInput);
@@ -143,8 +142,10 @@ public class GameServlet extends HttpServlet {
 				error = 1;
 				myGame.setTip("Invalid Input");
 			}
-		}else if(myGame.getRequestMove().equals("pickLandlord")){
-			//drawing cards, etc
+		}else if(myGame.getRequestMove().equals("pickCard")){
+			if (request.getParameter("userInput")!=null && userIndex == myGame.getCurrentUserIndex()){
+				
+			}
 		}
 
 		response.setContentType("application/json");

@@ -7,13 +7,10 @@ m	implement cookie attributes(on server with https)
 waiting room
 m	add userIndex to session after joining room (done)
 game
-f	use getters for reference in json object in toJson function
 f	checks to validate input, validate if correct user's turn
-f	pick landlord
 f	decide bet
 f	input cards
 f	determine winner
-f	log all moves
 f	timeout for user to make moves
 user status
 m	see the win/loss statistics of themselves and others
