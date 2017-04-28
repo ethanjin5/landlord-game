@@ -1,5 +1,5 @@
 registration
-m	length format limit on username,email,phone
+m	length format limit on username,email,phone (done)
 m	add description of strong password (done)
 user session management
 m	implement session idle,absolute timeout
@@ -17,4 +17,4 @@ m	see the win/loss statistics of themselves and others
 m	interface for user to view stats and game stats, see game moves of completed games
 report
 m	prove mysql is safe, libraries used are safe, no known vulnerabilities
-m	shuffle must be random
+m	shuffle must be random (...done...)
