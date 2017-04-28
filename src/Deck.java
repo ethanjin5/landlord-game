@@ -1,3 +1,4 @@
+import java.security.SecureRandom;
 import java.util.*;
 
 public class Deck {
@@ -23,7 +24,7 @@ public class Deck {
 	}
 	
 	public void shuffle(){
-		Collections.shuffle(this.cards);
+		Collections.shuffle(this.cards, new SecureRandom());
 	}
 	
 	public static boolean isValidHand(ArrayList<Card> cards){
