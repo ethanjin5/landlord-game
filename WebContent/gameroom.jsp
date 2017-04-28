@@ -6,7 +6,7 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Landlord Game</title>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"
 	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 	crossorigin="anonymous"></script>

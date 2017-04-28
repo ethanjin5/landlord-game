@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +22,6 @@ public class RoomServlet extends HttpServlet {
 	
 	private int roomNumber = 0;
 	private String roomName = "gameroom";
-	private Room room=null;
 	private int userId1;
 	private int userId2;
 	private int userId3;
@@ -87,8 +84,7 @@ public class RoomServlet extends HttpServlet {
 						}else if(userNumber==2){
 						
 							synchronized (this) {
-								room.addPlayer(user1);
-								String queryUpdate = "UPDATE room SET user3=?, user1Index=?, usernumber=? where roomid=?";
+								String queryUpdate = "UPDATE room SET user3=?, user3Index=?, usernumber=? where roomid=?";
 								PreparedStatement stmtUpdate = con.prepareStatement(queryUpdate);
 								stmtUpdate.setInt(1,userid);
 								stmtUpdate.setInt(2,2);
@@ -96,7 +92,7 @@ public class RoomServlet extends HttpServlet {
 								stmtUpdate.setInt(4,roomNumber);
 
 								int countInsert = stmtUpdate.executeUpdate();
-								if (countInsert>0){ //succesfully added user into database
+								if (countInsert>0){ //successfully added user into database
 									address = "/gameroom.jsp";
 									session.setAttribute("myIndex", 2);
 								}else{
@@ -110,7 +106,6 @@ public class RoomServlet extends HttpServlet {
 
 						}else if(userNumber==1){
 							synchronized (this) {
-								room.addPlayer(user1);
 								String queryUpdate = "UPDATE room SET user2=?, user2Index=?, usernumber=? where roomid=?";
 								PreparedStatement stmtUpdate = con.prepareStatement(queryUpdate);
 								stmtUpdate.setInt(1,userid);
@@ -119,7 +114,7 @@ public class RoomServlet extends HttpServlet {
 								stmtUpdate.setInt(4,roomNumber);
 
 								int countInsert = stmtUpdate.executeUpdate();
-								if (countInsert>0){ //succesfully added user into database
+								if (countInsert>0){ //successfully added user into database
 									address = "/gameroom.jsp";
 									session.setAttribute("myIndex", 1);
 								}else{
@@ -137,28 +132,26 @@ public class RoomServlet extends HttpServlet {
 					
 				}else{ //room is not found, create a new room
 					synchronized (this) {
-						room = new Room(roomNumber, roomName, user1);
-						roomNumber = roomNumber+1;
-						//rooms.put(room.getRoomId(), room);
-					}
-					String queryInsert = "INSERT INTO room (roomid,roomname,user1,user2,user3,user1Index,user2Index,user3Index,usernumber) VALUES(?,?,?,?,?,?,?,?,?)";
-					PreparedStatement stmtInsert = con.prepareStatement(queryInsert);
-					stmtInsert.setInt(1,roomNumber);
-					stmtInsert.setString(2,roomName);
-					stmtInsert.setInt(3,userid);
-					stmtInsert.setInt(4,-1);
-					stmtInsert.setInt(5,-1);
-					stmtInsert.setInt(6,0);
-					stmtInsert.setInt(7,-1);
-					stmtInsert.setInt(8,-1);
-					stmtInsert.setInt(9,1);
-					int countInsert = stmtInsert.executeUpdate();
-					if (countInsert>0){ //succesfully added room into database
-						address = "/gameroom.jsp";
-						session.setAttribute("myIndex", 0);
-					}else{
-						address = "/index.jsp";
-						request.setAttribute("error","Can not add game room now. Please come back later.");
+						String queryInsert = "INSERT INTO room (roomid,roomname,user1,user2,user3,user1Index,user2Index,user3Index,usernumber) VALUES(?,?,?,?,?,?,?,?,?)";
+						PreparedStatement stmtInsert = con.prepareStatement(queryInsert);
+						stmtInsert.setInt(1,roomNumber);
+						stmtInsert.setString(2,roomName);
+						stmtInsert.setInt(3,userid);
+						stmtInsert.setInt(4,-1);
+						stmtInsert.setInt(5,-1);
+						stmtInsert.setInt(6,0);
+						stmtInsert.setInt(7,-1);
+						stmtInsert.setInt(8,-1);
+						stmtInsert.setInt(9,1);
+						int countInsert = stmtInsert.executeUpdate();
+						if (countInsert>0){ //successfully added room into database
+							address = "/gameroom.jsp";
+							session.setAttribute("myIndex", 0);
+						}else{
+							address = "/index.jsp";
+							request.setAttribute("error","Can not add game room now. Please come back later.");
+						}
+						
 					}
 					
 					con.close();
