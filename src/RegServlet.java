@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/RegServlet")
 public class RegServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	//private static final int timeoutInSeconds = 20*60;
+	private static final int timeoutInSeconds = 10*60;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -37,7 +37,7 @@ public class RegServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		String address = "";
 		HttpSession session = request.getSession();
-		//session.setMaxInactiveInterval(timeoutInSeconds);
+		session.setMaxInactiveInterval(timeoutInSeconds);
 		//get user inputs
 		String username = request.getParameter("username");
 		String password1 = request.getParameter("password1");

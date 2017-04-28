@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/RoomServlet")
 public class RoomServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final int timeoutInSeconds = 10*60;
 	
 	private int roomNumber = 0;
 	private String roomName = "gameroom";
@@ -41,6 +42,7 @@ public class RoomServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 			HttpSession session = request.getSession();
+			session.setMaxInactiveInterval(timeoutInSeconds);
 			String address = "";
 		
 			String username=request.getParameter("username");

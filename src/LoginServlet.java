@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final int timeoutInSeconds = 10*60;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -37,6 +38,7 @@ public class LoginServlet extends HttpServlet {
 		String address = "";
 		int userid;
 		HttpSession session = request.getSession();
+		session.setMaxInactiveInterval(timeoutInSeconds);
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 //		System.out.println("***&&&&"+username);

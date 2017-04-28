@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/AuthenticateServlet")
 public class AuthenticateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final int timeoutInSeconds = 10*60;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -36,6 +37,7 @@ public class AuthenticateServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		String address = request.getParameter("address");
 		HttpSession session = request.getSession();
+		session.setMaxInactiveInterval(timeoutInSeconds);
 		int result;
 		if (session.getAttribute("userid")== null || session.getAttribute("userid") == ""){
 			request.setAttribute("result", 0);

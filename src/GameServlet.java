@@ -21,6 +21,7 @@ import org.json.JSONObject;
 @WebServlet("/GameServlet")
 public class GameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final int timeoutInSeconds = 10*60;
 
 	private Game myGame = null;
 	
@@ -35,6 +36,7 @@ public class GameServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
+		session.setMaxInactiveInterval(timeoutInSeconds);
 		int userIndex = -1;  // set to -1, currently 1 for testing
 		if (session.getAttribute("myIndex")!= null && session.getAttribute("myIndex") != ""){
 			userIndex = (int)session.getAttribute("myIndex");
@@ -88,6 +90,7 @@ public class GameServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
+		session.setMaxInactiveInterval(timeoutInSeconds);
 		int userIndex = -1;  // set to -1
 		if (session.getAttribute("myIndex")!= null && session.getAttribute("myIndex") != ""){
 			userIndex = (int)session.getAttribute("myIndex"); //valid user index
