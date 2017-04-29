@@ -38,6 +38,8 @@ public class RegServlet extends HttpServlet {
 		String address = "";
 		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(timeoutInSeconds);
+		String sessionid = session.getId();
+		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 		//get user inputs
 		String username = request.getParameter("username");
 		String password1 = request.getParameter("password1");
