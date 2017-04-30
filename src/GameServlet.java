@@ -146,6 +146,7 @@ public class GameServlet extends HttpServlet {
 			result.put("gameStarted", 0);
 			response.getWriter().write(result.toString());
 		}
+		
 	}
 
 	/**
