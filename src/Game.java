@@ -181,7 +181,7 @@ public class Game {
 				return i;
 			}
 		}
-		return 0; 
+		return getNextUserIndex(); 
 	}
 	
 	public void resetUserMoves(){
