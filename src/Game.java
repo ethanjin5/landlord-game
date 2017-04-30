@@ -35,7 +35,9 @@ public class Game {
 		this.tip = tip;
 		this.users = users;
 		this.landlordCards = landlordCards;
+		
 		try {
+			synchronized (this){
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager
 					.getConnection(
@@ -52,9 +54,11 @@ public class Game {
 			    this.id=rs.getInt(1);
 			}
 			con.close();
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		
 	}
 	
 	public void setPlayerActionTime(){
@@ -73,12 +77,12 @@ public class Game {
 									"landlord", "admin");
 					String query = "UPDATE games set winner = ?, set bet =?, set landlord = ?";
 					PreparedStatement stmt = con.prepareStatement(query);
-					stmt.setInt(1,users.get(winnerIndex).getUserid());
+					stmt.setString(1,users.get(winnerIndex).getUsername());
 					stmt.setInt(2,getBid());
 					stmt.setInt(3,users.get(landlordIndex).getUserid());
 					stmt.executeUpdate(); //add a new game into database
 					
-					String resetRoomQuery = "UPDATE room set user1 = -1, user2 = -1, user3 = -1, user1Index = -1, user2Index = -1, user3Index=-1,usrnumber=0";
+					String resetRoomQuery = "delete from room";
 					PreparedStatement resetstmt = con.prepareStatement(resetRoomQuery);
 					resetstmt.executeUpdate();
 					con.close();
@@ -239,6 +243,11 @@ public class Game {
 	public JSONObject toJson( int userIndex){
 		JSONObject obj = new JSONObject();
         obj.put("currentUserIndex", this.currentUserIndex);
+        if (winnerIndex>=0){
+        	obj.put("gameStarrted", 0);
+        }else{
+        	obj.put("gameStarted", 1);
+        }
         obj.put("myUserIndex", userIndex);
         obj.put("requeustMove", this.requestMove);
         obj.put("playerMove", this.playerMove);

@@ -21,8 +21,8 @@ public class RoomServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final int timeoutInSeconds = 10*60;
 	
-	private int roomNumber = 0;
-	private String roomName = "gameroom";
+	private static int roomNumber = 0;
+	private static String roomName = "gameroom";
 	private int userId1;
 	private int userId2;
 	private int userId3;

@@ -41,7 +41,7 @@ public class AuthenticateServlet extends HttpServlet {
 		String sessionid = session.getId();
 		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 		int result;
-		if (session.getAttribute("userid")== null || session.getAttribute("userid") == ""){
+		if (session.getAttribute("userid")== null){
 			request.setAttribute("result", 0);
 			result = 1;
 		}else{

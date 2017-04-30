@@ -8,7 +8,7 @@ waiting room
 m	add userIndex to session after joining room (done)
 game
 f	too many sql connections?
-f	pass when you can input anything causes incorrect orders
+f	pass when you can input anything causes incorrect orders 
 
 user status
 m	see the win/loss statistics of themselves and others    (for self is done)

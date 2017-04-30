@@ -69,14 +69,19 @@ public class GameStateServlet extends HttpServlet {
 				stmt.setInt(3,userid);
 				ResultSet res = stmt.executeQuery();
 				List<GameState> gameStats = new ArrayList<GameState>();
-				if (res.next()){ //found game
+				while (res.next()){ //found game
 					GameState game = new GameState();
 					
 					int gameId = res.getInt("id");
 					game.setGameId(gameId);
 					game.setUserId(userid);
-					int winnerId = res.getInt("winner");
-					game.setWinOrLose(winnerId==userid?"Yes":"No");
+					
+					if(res.getString("winner") != null){
+						String winnerUserNae = res.getString("winner");
+						game.setWinOrLose(winnerUserNae.equalsIgnoreCase(username)?"Yes":"No");
+					}else{
+						game.setWinOrLose("Unfinished");
+					}
 					
 					String queryMoney = "select * from users where id=?";
 					PreparedStatement stmtMoney = con.prepareStatement(queryMoney);
@@ -90,9 +95,12 @@ public class GameStateServlet extends HttpServlet {
 					PreparedStatement stmtStat = con.prepareStatement(queryStat);
 					stmtStat.setInt(1,gameId);
 					ResultSet resStat = stmtStat.executeQuery();
-					if (resStat.next()){
-						game.setGameStatString(resStat.getString("move"));
+					String allMoveString = "";
+					while(resStat.next()){
+						allMoveString = allMoveString+resStat.getString("move")+";";
+						
 					}
+					game.setGameStatString(allMoveString);
 					System.out.println(game.toString());
 					
 					gameStats.add(game);
