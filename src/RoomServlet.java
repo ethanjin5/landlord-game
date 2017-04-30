@@ -48,11 +48,12 @@ public class RoomServlet extends HttpServlet {
 			String address = "";
 		
 			String username=request.getParameter("username");
+			session.setAttribute("username", username);
 //			System.out.println("===========username: "+username);
 			int userid = Integer.parseInt(request.getParameter("userid"));
 //			System.out.println("===========userid: "+userid);
 			User user1 = User.getUser(userid);
-			System.out.println("===========userId: "+userid);
+			session.setAttribute("userid", userid);
 			
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
@@ -79,7 +80,8 @@ public class RoomServlet extends HttpServlet {
 						}else{
 							session.setAttribute("myIndex", 2);
 						}
-						System.out.println("Welcome back to the game: "+username);
+						System.out.println("Welcome back to the game: "+username+", your userId is: "+userid);
+						System.out.println("yor index is: "+session.getAttribute("myIndex"));
 						address = "/gameroom.jsp";
 					}else{
 						if(userNumber==3){
