@@ -39,6 +39,8 @@ public class LoginServlet extends HttpServlet {
 		int userid;
 		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(timeoutInSeconds);
+		String sessionid = session.getId();
+		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 //		System.out.println("***&&&&"+username);

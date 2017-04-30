@@ -38,6 +38,8 @@ public class AuthenticateServlet extends HttpServlet {
 		String address = request.getParameter("address");
 		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(timeoutInSeconds);
+		String sessionid = session.getId();
+		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 		int result;
 		if (session.getAttribute("userid")== null || session.getAttribute("userid") == ""){
 			request.setAttribute("result", 0);

@@ -38,6 +38,8 @@ public class GameServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(timeoutInSeconds);
+		String sessionid = session.getId();
+		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 		int userIndex = -1;  // set to -1, currently 1 for testing
 		if (session.getAttribute("myIndex")!= null && session.getAttribute("myIndex") != ""){
 			userIndex = (int)session.getAttribute("myIndex");
@@ -126,6 +128,9 @@ public class GameServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(timeoutInSeconds);
+		String sessionid = session.getId();
+		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
+		
 		int userIndex = -1;  // set to -1
 		if (session.getAttribute("myIndex")!= null && session.getAttribute("myIndex") != ""){
 			userIndex = (int)session.getAttribute("myIndex"); //valid user index

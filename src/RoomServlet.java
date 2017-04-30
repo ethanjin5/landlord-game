@@ -43,6 +43,8 @@ public class RoomServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 			HttpSession session = request.getSession();
 			session.setMaxInactiveInterval(timeoutInSeconds);
+			String sessionid = session.getId();
+			response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 			String address = "";
 		
 			String username=request.getParameter("username");
