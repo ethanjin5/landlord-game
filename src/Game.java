@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,15 +28,6 @@ public class Game {
 	private GameClient gameclient;
 	private Date playerActionTime = new Date();
 	
-	public Game(int currentUserIndex, String requestMove, ArrayList<User> users,
-			int winner, int landlordIndex, ArrayList landlordCards) {
-		this.currentUserIndex = currentUserIndex;
-		this.requestMove = requestMove;
-		this.users = users;
-		this.winner = winner;
-		this.landlordIndex = landlordIndex;
-		//TODO: add a game in database
-	}
 	public Game(int currentUserIndex, String requestMove,String playerMove, String tip, ArrayList<User> users, ArrayList landlordCards) {
 		this.currentUserIndex = currentUserIndex;
 		this.requestMove = requestMove;
@@ -43,6 +35,26 @@ public class Game {
 		this.tip = tip;
 		this.users = users;
 		this.landlordCards = landlordCards;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager
+					.getConnection(
+							"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+							"landlord", "admin");
+			String query = "INSERT INTO games (user1,user2,user3) VALUES(?,?,?)";
+			PreparedStatement stmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1,users.get(0).getUserid());
+			stmt.setInt(2,users.get(1).getUserid());
+			stmt.setInt(3,users.get(2).getUserid());
+			stmt.executeUpdate(); //add a new game into database
+			ResultSet rs = stmt.getGeneratedKeys();
+			if (rs.next()){
+			    this.id=rs.getInt(1);
+			}
+			con.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 	
 	public void setPlayerActionTime(){
@@ -53,6 +65,26 @@ public class Game {
 			if (users.get(i).getMyCards().size() == 0){
 				this.winnerIndex = users.get(i).getMyIndex();
 				this.winner = users.get(i).getUserid();
+				try {
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection con = DriverManager
+							.getConnection(
+									"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+									"landlord", "admin");
+					String query = "UPDATE games set winner = ?, set bet =?, set landlord = ?";
+					PreparedStatement stmt = con.prepareStatement(query);
+					stmt.setInt(1,users.get(winnerIndex).getUserid());
+					stmt.setInt(2,getBid());
+					stmt.setInt(3,users.get(landlordIndex).getUserid());
+					stmt.executeUpdate(); //add a new game into database
+					
+					String resetRoomQuery = "UPDATE room set user1 = -1, user2 = -1, user3 = -1, user1Index = -1, user2Index = -1, user3Index=-1,usrnumber=0";
+					PreparedStatement resetstmt = con.prepareStatement(resetRoomQuery);
+					resetstmt.executeUpdate();
+					con.close();
+				} catch (Exception e) {
+					System.out.println(e);
+				}
 				return true;
 			}
 		}
@@ -81,7 +113,7 @@ public class Game {
 	}
 	
 	public int getId() {
-		return id;
+		return this.id;
 	}
 	public int getCurrentUserIndex() {
 		return currentUserIndex;
@@ -196,6 +228,7 @@ public class Game {
 		}
 	}
 	public long getCountdown(){
+		
 		Date current = new Date();
 		long seconds = -1;
 		if (playerActionTime !=null){
@@ -217,6 +250,9 @@ public class Game {
         obj.put("user0CardCount", users.get(0).getMyCards().size());
         obj.put("user1CardCount", users.get(1).getMyCards().size());
         obj.put("user2CardCount", users.get(2).getMyCards().size());
+        obj.put("user0Money", users.get(0).getMoney());
+        obj.put("user1Money", users.get(1).getMoney());
+        obj.put("user2Money", users.get(2).getMoney());
         obj.put("landlordIndex", landlordIndex);
         obj.put("landlordCards", landlordCards.toString());
         obj.put("winnerIndex", winnerIndex);

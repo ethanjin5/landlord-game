@@ -1,4 +1,8 @@
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,10 +50,30 @@ public class GameServlet extends HttpServlet {
 		}
 		
 		ArrayList <User>users = new ArrayList<User>();
-		//hard coded users
-		users.add( User.getUser(1) );
-		users.add( User.getUser(2) );
-		users.add( User.getUser(5) );
+		//get user from room table
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager
+					.getConnection(
+							"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+							"landlord", "admin");
+			String query = "select user1,user2,user3 from room where roomid = 1";
+			PreparedStatement stmt = con.prepareStatement(query);
+			ResultSet res = stmt.executeQuery();
+			if (res.next()){ 
+				if (res.getInt("user1")!=-1){
+					users.add(User.getUser(res.getInt("user1")));
+				}
+				if (res.getInt("user2")!=-1){
+					users.add(User.getUser(res.getInt("user2")));
+				}
+				if (res.getInt("user3")!=-1){
+					users.add(User.getUser(res.getInt("user3")));
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		if (myGame==null && users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
 			GameClient gameclient = new GameClient();
 			ArrayList user1Cards = new ArrayList();
@@ -79,14 +103,16 @@ public class GameServlet extends HttpServlet {
 			users.get(1).setMyIndex(1);
 			users.get(2).setMyIndex(2);
 			//create a game
-			myGame = new Game(0,"pickLandlord","Please call to be the landlord!","Available inputs includes \"Call\" and \"Pass\"",users,landlordCards);
+			synchronized (this) {
+				myGame = new Game(0,"pickLandlord","Please call to be the landlord!","Available inputs includes \"Call\" and \"Pass\"",users,landlordCards);
+			}
 			myGame.setGameClient(gameclient);
 			myGame.setBid(100); // default 100 bid 
 		}else{
-			if (myGame.getCountdown()<=60){
+			if (myGame.getCountdown()<=0){
 				User currentUser = (User)myGame.getUsers().get(myGame.getCurrentUserIndex());
 				currentUser.setMyMove("Pass");
-				StatLogger.log(1,"User "+currentUser.getUsername()+" passed");
+				StatLogger.log(myGame.getId(),"User "+currentUser.getUsername()+" passed");
 				myGame.setPlayerMove("User "+currentUser.getUsername()+" passed.");
 				if(myGame.getRequestMove().equals("pickLandlord")){
 					if (myGame.hasNextUserMove()){//next user to pick landlord or increase bid
@@ -110,7 +136,7 @@ public class GameServlet extends HttpServlet {
 					currentUser.setMyMove("Pass");
 					myGame.setPlayerMove("User "+currentUser.getUsername()+" passed.");
 					myGame.setCurrentUserIndex(myGame.getNextUserMoveIndex());
-					StatLogger.log(1,"User "+currentUser.getUsername()+" passed");
+					StatLogger.log(myGame.getId(),"User "+currentUser.getUsername()+" passed");
 				}
 			}
 			
@@ -147,23 +173,25 @@ public class GameServlet extends HttpServlet {
 						myGame.setTip("You already called, please increase bid or pass");
 					}else{
 						myUser.setMyMove(userInput);
-						StatLogger.log(1,"User "+myUser.getUsername()+" called landlor");
+						StatLogger.log(myGame.getId(),"User "+myUser.getUsername()+" called landlor");
 						myGame.setPlayerMove("User "+myUser.getUsername()+" called landlord.");
 						myGame.setLandlordIndex(myUser.getMyIndex());
 					}
 				}else if(userInput.equals("bid * 2") || userInput.equals("bid * 3")){
 					if (myUser.getMyMove()!=null && (myUser.getMyMove().equals("Call")|| myUser.getMyMove().equals("bid * 2") || myUser.getMyMove().equals("bid * 3"))){
-						if (userInput.equals("bid * 2") && myUser.getMoney()>=myGame.getBid()*2){
+						if (userInput.equals("bid * 2") && ((User)myGame.getUsers().get(0)).getMoney()>=myGame.getBid()*2 && 
+								((User)myGame.getUsers().get(1)).getMoney()>=myGame.getBid()*2 && ((User)myGame.getUsers().get(2)).getMoney()>=myGame.getBid()*2){
 							myGame.setBid(myGame.getBid()*2);
 							myGame.setPlayerMove("User "+myUser.getUsername()+" called bid * 2, current bid: "+myGame.getBid());
 							myGame.setLandlordIndex(myUser.getMyIndex());
-						}else if (userInput.equals("bid * 3") && myUser.getMoney()>=myGame.getBid()*2){
+						}else if (userInput.equals("bid * 3") && ((User)myGame.getUsers().get(0)).getMoney()>=myGame.getBid()*3 && 
+								((User)myGame.getUsers().get(1)).getMoney()>=myGame.getBid()*3 && ((User)myGame.getUsers().get(2)).getMoney()>=myGame.getBid()*3){
 							myGame.setBid(myGame.getBid()*3);
 							myGame.setPlayerMove("User "+myUser.getUsername()+" called bid * 3, current bid: "+myGame.getBid());
 							myGame.setLandlordIndex(myUser.getMyIndex());
 						}else{ //not enough money
 							error = 1;
-							myGame.setTip("You don't have enough money to bid this high");
+							myGame.setTip("Someone don't have enough money to bid this high");
 						}
 					}else{
 						error = 1;
@@ -172,11 +200,11 @@ public class GameServlet extends HttpServlet {
 					myUser.setMyMove(userInput);
 				}else if(userInput.equals("Pass")){
 					myUser.setMyMove(userInput);
-					StatLogger.log(1,"User "+myUser.getUsername()+" passed");
+					StatLogger.log(myGame.getId(),"User "+myUser.getUsername()+" passed");
 					myGame.setPlayerMove("User "+myUser.getUsername()+" passed.");
 				}else{
 					error = 1;
-					myGame.setTip("Invalid Input1");
+					myGame.setTip("Invalid Input");
 				}
 				if (error!=1){//valid input, move on to next User
 					//all three user passed
@@ -199,12 +227,14 @@ public class GameServlet extends HttpServlet {
 						for(int u =0; u<myGame.getUsers().size();u++){
 							User current = (User)myGame.getUsers().get(u);
 							current.setMyMove(null);
+							current.setMoney(current.getMoney() - myGame.getBid());
 						}
+						
 					}
 				}
 			}else{ //input is null
 				error = 1;
-				myGame.setTip("Invalid Input2");
+				myGame.setTip("Invalid Input");
 			}
 		}else if(myGame.getRequestMove().equals("pickCard")){
 			if (request.getParameter("userInput")!=null && userIndex == myGame.getCurrentUserIndex()){
@@ -212,7 +242,7 @@ public class GameServlet extends HttpServlet {
 				String cardsPattern = "^([DCHSJ]([ABLJQK1-9]|10)){1}(,[DCHSJ]([ABLJQK1-9]|10))*$"; //validate user input
 				if (request.getParameter("userInput").equals("Pass")){
 					currentUser.setMyMove(request.getParameter("userInput"));
-					StatLogger.log(1,"User "+currentUser.getUsername()+" passed");
+					StatLogger.log(myGame.getId(),"User "+currentUser.getUsername()+" passed");
 					myGame.setPlayerMove("User "+currentUser.getUsername()+" passed.");
 				}else if (request.getParameter("userInput").matches(cardsPattern)){
 					if (currentUser.getMyMove()!=null && currentUser.getMyMove().equals("Pass")){
@@ -237,7 +267,7 @@ public class GameServlet extends HttpServlet {
 									currentUser.setMyMove("playedHand");
 									myGame.setPlayerMove("User "+currentUser.getUsername()+" played "+inputCards);
 									myGame.setHighestHandIndex(userIndex);
-									StatLogger.log(1,"User "+currentUser.getUsername()+" played "+inputCards);
+									StatLogger.log(myGame.getId(),"User "+currentUser.getUsername()+" played "+inputCards);
 								}else{
 									error = 1;
 									myGame.setTip("Your must play a higher hand than the previous user.");
@@ -253,7 +283,7 @@ public class GameServlet extends HttpServlet {
 					}
 				}else{
 					error = 1;
-					myGame.setTip("Invalid Input4");
+					myGame.setTip("Invalid Input");
 				}
 			}else{
 				error = 1;
@@ -263,7 +293,18 @@ public class GameServlet extends HttpServlet {
 				if (myGame.someoneWon()){
 					User winner = (User)myGame.getUsers().get(myGame.getWinnerIndex());
 					myGame.setPlayerMove("User "+winner.getUsername()+" won the game.");
-					StatLogger.log(1,"User "+winner.getUsername()+" won the game.");
+					StatLogger.log(myGame.getId(),"User "+winner.getUsername()+" won the game.");
+					if (myGame.getWinnerIndex() == myGame.getLandlordIndex()){
+						winner.setMoney(winner.getMoney()+myGame.getBid()*3);
+					}else{
+						for(int u =0;u<myGame.getUsers().size();u++){
+							if(u!=myGame.getLandlordIndex()){
+								User current = (User)myGame.getUsers().get(u);
+								current.setMoney(current.getMoney()+(myGame.getBid()*3/2));
+							}
+						}
+					}
+					myGame.setRequestMove("WON");
 				}else if (myGame.hasNextUserMove()){//next user to pick landlord or increase bid
 					myGame.setCurrentUserIndex(myGame.getNextUserMoveIndex());
 					myGame.setTip("Please play a hand of "+myGame.getGameClient().getCurrentHand()+" or pass.");
@@ -279,7 +320,7 @@ public class GameServlet extends HttpServlet {
 					User highestUser = (User)myGame.getUsers().get(myGame.getHighestHandIndex());
 					myGame.setTip("You had the highest hand, you may play any hand you want. Please enter cards or pass");
 					myGame.getGameClient().setCurrentHand(null); //reset currentHand and cards
-					StatLogger.log(1,"User "+highestUser.getUsername()+" had the highest hand.");
+					StatLogger.log(myGame.getId(),"User "+highestUser.getUsername()+" had the highest hand.");
 				}
 			}
 		}

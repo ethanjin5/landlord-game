@@ -23,25 +23,33 @@
 	%>
 	<script>
 		var myIndex = ${myIndex};
-		setInterval(getUpdate, 1000); //get update every 3 seconds
+		gameFinished = 0;
+		if (!gameFinished){
+			setInterval(getUpdate, 1000); //get update every 3 seconds
+		}
 		playerMove = "";
 		function getUpdate() {
 			$.ajax({
 				url : "GameServlet",
 				method : "GET"
 			}).done(function(data) {
-				console.log(data);
 				//set cards for this user and counts for other other
 				$("#cardsArea").html("My Cards: " + data.myCards);
 				$("#userLeftTimer").html("");
 				$("#userMiddleTimer").html("");
 				$("#userRightTimer").html("");
+				$("#userMiddleLandlord").html("");
+				$("#userLeftLandlord").html("");
+				$("#userRightLandlord").html("");
 				if (data.myUserIndex == 0){
 					$("#userMiddleName").html("User "+data.user0Name);
 					$("#userLeftCards").html("Cards left: " + data.user1CardCount);
 					$("#userRightCards").html("Cards left: " + data.user2CardCount);
 					$("#userLeftName").html("User "+data.user1Name);
 					$("#userRightName").html("User "+data.user2Name);
+					$("#userLeftMoney").html("Money: "+data.user1Money);
+					$("#userRightMoney").html("Money: "+data.user2Money);
+					$("#userMiddleMoney").html("Money: "+data.user0Money);
 					if (data.landlordIndex==0){
 						$("#userMiddleLandlord").html("(Landlord)");
 					}else if (data.landlordIndex==1){
@@ -61,9 +69,9 @@
 					$("#userLeftName").html("User "+data.user2Name);
 					$("#userRightName").html("User "+data.user0Name);
 					$("#userRightCards").html("Cards left: " + data.user0CardCount);
-					$("#userMiddleLandlord").html("");
-					$("#userLeftLandlord").html("");
-					$("#userRightLandlord").html("");
+					$("#userLeftMoney").html("Money: "+data.user2Money);
+					$("#userRightMoney").html("Money: "+data.user0Money);
+					$("#userMiddleMoney").html("Money: "+data.user1Money);
 					if (data.landlordIndex==1){
 						$("#userMiddleLandlord").html("(Landlord)");
 					}else if (data.landlordIndex==2){
@@ -82,6 +90,9 @@
 					$("#userLeftName").html("User "+data.user0Name);
 					$("#userRightName").html("User "+data.user1Name);
 					$("#userRightCards").html("Cards left: " + data.user1CardCount);
+					$("#userLeftMoney").html("Money: "+data.user0Money);
+					$("#userRightMoney").html("Money: "+data.user1Money);
+					$("#userMiddleMoney").html("Money: "+data.user2Money);
 					if (data.landlordIndex==2){
 						$("#userMiddleLandlord").html("(Landlord)");
 					}else if (data.landlordIndex==0){
@@ -111,6 +122,10 @@
 				if (data.winnerIndex>=0){
 					$("#gameFinished").show();
 					$("#inputArea input").prop('disabled', true);
+					$("#userLeftTimer").html("");
+					$("#userMiddleTimer").html("");
+					$("#userRightTimer").html("");
+					gameFinished = 1;
 				}else{
 					$("#gameFinished").hide();
 				}
@@ -154,6 +169,7 @@
 					if (data.winnerIndex>=0){
 						$("#gameFinished").show();
 						$("#inputArea input").prop('disabled', true);
+						gameFinished = 1;
 					}else{
 						$("#gameFinished").hide();
 					}
@@ -172,16 +188,19 @@
 	</div>
 	<div id="leftuser">
 		<div id="userLeftName"></div><div id="userLeftLandlord"></div><br>
+		<div id="userLeftMoney"></div>
 		<div id="userLeftCards"></div>
 		<div id="userLeftTimer"></div>
 	</div>
 	<div id="rightuser">
 		<div id="userRightName"></div><div id="userRightLandlord"></div><br>
+		<div id="userRightMoney"></div>
 		<div id="userRightCards"></div>
 		<div id="userRightTimer"></div>
 	</div>
 	<div id="middleuser">
 		<div id="userMiddleName"></div><div id="userMiddleLandlord"></div><br>
+		<div id="userMiddleMoney"></div>
 		<div id="cardsArea"></div><br>
 		<div id="inputArea">
 			<div id="tip"></div><br>
