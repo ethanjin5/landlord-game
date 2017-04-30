@@ -168,8 +168,12 @@ public class Game {
 		if (users.get(getNextUserIndex()).getMyMove()==null){
 			return getNextUserIndex();
 		}
+		int count = 0;
 		for(int i=getNextUserIndex();i<=users.size();){
-			System.out.println(users.get(i).getMyMove());
+			count++;
+			if (count>=3){
+				break;
+			}
 			if(users.get(i).getMyMove().equals("Pass")){
 				if (i == 2){
 					i = 0;
@@ -180,6 +184,8 @@ public class Game {
 			}else{
 				return i;
 			}
+			
+			
 		}
 		return getNextUserIndex(); 
 	}
