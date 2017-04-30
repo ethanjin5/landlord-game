@@ -50,31 +50,39 @@ public class GameServlet extends HttpServlet {
 		}
 		
 		ArrayList <User>users = new ArrayList<User>();
-		//get user from room table
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager
-					.getConnection(
-							"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
-							"landlord", "admin");
-			String query = "select user1,user2,user3 from room";
-			PreparedStatement stmt = con.prepareStatement(query);
-			ResultSet res = stmt.executeQuery();
-			if (res.next()){ 
-				if (res.getInt("user1")>=0){
-					users.add(User.getUser(res.getInt("user1")));
+		//get user from room table 
+		if (myGame==null && users.size()<3){
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				Connection con = DriverManager
+						.getConnection(
+								"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+								"landlord", "admin");
+				String query = "select user1,user2,user3 from room";
+				PreparedStatement stmt = con.prepareStatement(query);
+				ResultSet res = stmt.executeQuery();
+				if (res.next()){ 
+					if (res.getInt("user1")>=0){
+						users.add(User.getUser(res.getInt("user1")));
+					}
+					if (res.getInt("user2")>=0){
+						users.add(User.getUser(res.getInt("user2")));
+					}
+					if (res.getInt("user3")>=0){
+						users.add(User.getUser(res.getInt("user3")));
+					}
 				}
-				if (res.getInt("user2")>=0){
-					users.add(User.getUser(res.getInt("user2")));
-				}
-				if (res.getInt("user3")>=0){
-					users.add(User.getUser(res.getInt("user3")));
-				}
+			} catch (Exception e) {
+				System.out.println(e);
 			}
-		} catch (Exception e) {
-			System.out.println(e);
 		}
-		if(users.size()==3){
+		if(myGame!=null && myGame.getWinnerIndex()>=0){
+			response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+		    response.getWriter().write(myGame.toJson(userIndex).toString());
+		}
+		else if(users.size()==3 ){
+		synchronized(this){
 		if (myGame==null && users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
 			GameClient gameclient = new GameClient();
 			ArrayList user1Cards = new ArrayList();
@@ -104,8 +112,9 @@ public class GameServlet extends HttpServlet {
 			users.get(1).setMyIndex(1);
 			users.get(2).setMyIndex(2);
 			//create a game
-			synchronized (this) {
-				myGame = new Game(0,"pickLandlord","Please call to be the landlord!","Available inputs includes \"Call\" and \"Pass\"",users,landlordCards);
+			myGame = new Game(0,"pickLandlord","Please call to be the landlord!","Available inputs includes \"Call\" and \"Pass\"",users,landlordCards);
+			synchronized (myGame) {
+				myGame.addToDB();
 			}
 			myGame.setGameClient(gameclient);
 			myGame.setBid(100); // default 100 bid 
@@ -145,6 +154,7 @@ public class GameServlet extends HttpServlet {
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().write(myGame.toJson(userIndex).toString());
 		}
+		}
 		}else{
 			JSONObject result = new JSONObject();
 			response.setContentType("application/json");
@@ -152,6 +162,7 @@ public class GameServlet extends HttpServlet {
 			result.put("gameStarted", 0);
 			response.getWriter().write(result.toString());
 		}
+		
 	}
 
 	/**

@@ -133,7 +133,8 @@ public class RoomServlet extends HttpServlet {
 						}
 						
 					}
-					
+					res.close();
+					stmt.close();
 					con.close();
 					
 				}else{ //room is not found, create a new room
@@ -159,7 +160,6 @@ public class RoomServlet extends HttpServlet {
 						}
 						
 					}
-					
 					con.close();
 					
 				}

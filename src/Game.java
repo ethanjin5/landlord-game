@@ -36,8 +36,12 @@ public class Game {
 		this.users = users;
 		this.landlordCards = landlordCards;
 		
+		
+		
+	}
+	
+	public synchronized void addToDB(){
 		try {
-			synchronized (this){
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager
 					.getConnection(
@@ -53,12 +57,13 @@ public class Game {
 			if (rs.next()){
 			    this.id=rs.getInt(1);
 			}
+			rs.close();
+			stmt.close();
 			con.close();
-			}
+			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
 	}
 	
 	public void setPlayerActionTime(){
@@ -75,16 +80,19 @@ public class Game {
 							.getConnection(
 									"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
 									"landlord", "admin");
-					String query = "UPDATE games set winner = ?, set bet =?, set landlord = ?";
+					String query = "UPDATE games set winner = ?, bet =?, landlord = ? where id =?";
 					PreparedStatement stmt = con.prepareStatement(query);
 					stmt.setString(1,users.get(winnerIndex).getUsername());
 					stmt.setInt(2,getBid());
 					stmt.setInt(3,users.get(landlordIndex).getUserid());
+					stmt.setInt(4, id);
 					stmt.executeUpdate(); //add a new game into database
 					
 					String resetRoomQuery = "delete from room";
 					PreparedStatement resetstmt = con.prepareStatement(resetRoomQuery);
 					resetstmt.executeUpdate();
+					resetstmt.close();
+					stmt.close();
 					con.close();
 				} catch (Exception e) {
 					System.out.println(e);
@@ -244,7 +252,7 @@ public class Game {
 		JSONObject obj = new JSONObject();
         obj.put("currentUserIndex", this.currentUserIndex);
         if (winnerIndex>=0){
-        	obj.put("gameStarrted", 0);
+        	obj.put("gameStarted", 0);
         }else{
         	obj.put("gameStarted", 1);
         }

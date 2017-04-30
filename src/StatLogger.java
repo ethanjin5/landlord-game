@@ -15,10 +15,13 @@ public class StatLogger {
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setInt(1,gameid);
 			stmt.setString(2,playerMove);
-			stmt.executeUpdate(); //don't log yet, turn on when finished
+			stmt.executeUpdate(); 
+			stmt.close();
 			con.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		
+		
 	}
 }

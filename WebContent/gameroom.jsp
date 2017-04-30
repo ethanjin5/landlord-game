@@ -35,7 +35,7 @@
 			}).done(function(data) {
 				console.log(data);
 				//set cards for this user and counts for other other
-				if (data.gameStarted==1){
+				if (data.gameStarted==1 || (data.gameStarted ==0 && data.winnerIndex>=0)){
 				$("#cardsArea").html("My Cards: " + data.myCards);
 				$("#userLeftTimer").html("");
 				$("#userMiddleTimer").html("");
