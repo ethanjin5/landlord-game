@@ -57,23 +57,24 @@ public class GameServlet extends HttpServlet {
 					.getConnection(
 							"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
 							"landlord", "admin");
-			String query = "select user1,user2,user3 from room where roomid = 1";
+			String query = "select user1,user2,user3 from room";
 			PreparedStatement stmt = con.prepareStatement(query);
 			ResultSet res = stmt.executeQuery();
 			if (res.next()){ 
-				if (res.getInt("user1")!=-1){
+				if (res.getInt("user1")>=0){
 					users.add(User.getUser(res.getInt("user1")));
 				}
-				if (res.getInt("user2")!=-1){
+				if (res.getInt("user2")>=0){
 					users.add(User.getUser(res.getInt("user2")));
 				}
-				if (res.getInt("user3")!=-1){
+				if (res.getInt("user3")>=0){
 					users.add(User.getUser(res.getInt("user3")));
 				}
 			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		if(users.size()==3){
 		if (myGame==null && users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
 			GameClient gameclient = new GameClient();
 			ArrayList user1Cards = new ArrayList();
@@ -143,6 +144,13 @@ public class GameServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().write(myGame.toJson(userIndex).toString());
+		}
+		}else{
+			JSONObject result = new JSONObject();
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			result.put("gameStarted", 0);
+			response.getWriter().write(result.toString());
 		}
 	}
 
