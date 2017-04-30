@@ -23,7 +23,7 @@
 	%>
 	<script>
 		var myIndex = ${myIndex};
-		setInterval(getUpdate, 3000); //get update every 3 seconds
+		setInterval(getUpdate, 1000); //get update every 3 seconds
 		playerMove = "";
 		function getUpdate() {
 			$.ajax({
@@ -33,39 +33,86 @@
 				console.log(data);
 				//set cards for this user and counts for other other
 				$("#cardsArea").html("My Cards: " + data.myCards);
-				
+				$("#userLeftTimer").html("");
+				$("#userMiddleTimer").html("");
+				$("#userRightTimer").html("");
 				if (data.myUserIndex == 0){
-					$("#userMiddleCards").html("Cards left: " + data.user0CardCount);
 					$("#userMiddleName").html("User "+data.user0Name);
 					$("#userLeftCards").html("Cards left: " + data.user1CardCount);
 					$("#userRightCards").html("Cards left: " + data.user2CardCount);
 					$("#userLeftName").html("User "+data.user1Name);
 					$("#userRightName").html("User "+data.user2Name);
+					if (data.landlordIndex==0){
+						$("#userMiddleLandlord").html("(Landlord)");
+					}else if (data.landlordIndex==1){
+						$("#userLeftLandlord").html("(Landlord)");
+					}else if (data.landlordIndex==2){
+						$("#userRightLandlord").html("(Landlord)");
+					}
+					if(data.currentUserIndex==1){
+						console.log(data.countdown);
+						$("#userLeftTimer").html("Time Left: "+data.countdown);
+					}else if(data.currentUserIndex==2){
+						$("#userRightTimer").html("Time Left: "+data.countdown);
+					}
 				}else if(data.myUserIndex == 1){
-					$("#userMiddleCards").html("Cards left: " + data.user1CardCount);
 					$("#userMiddleName").html("User "+data.user1Name);
 					$("#userLeftCards").html("Cards left: " + data.user2CardCount);
 					$("#userLeftName").html("User "+data.user2Name);
 					$("#userRightName").html("User "+data.user0Name);
 					$("#userRightCards").html("Cards left: " + data.user0CardCount);
+					$("#userMiddleLandlord").html("");
+					$("#userLeftLandlord").html("");
+					$("#userRightLandlord").html("");
+					if (data.landlordIndex==1){
+						$("#userMiddleLandlord").html("(Landlord)");
+					}else if (data.landlordIndex==2){
+						$("#userLeftLandlord").html("(Landlord)");
+					}else if (data.landlordIndex==0){
+						$("#userRightLandlord").html("(Landlord)");
+					}
+					if(data.currentUserIndex==2){
+						$("#userLeftTimer").html("Time Left: "+data.countdown);
+					}else if(data.currentUserIndex==0){
+						$("#userRightTimer").html("Time Left: "+data.countdown);
+					}
 				}else if (data.myUserIndex == 2){
-					$("#userMiddleCards").html("Cards left: " + data.user2CardCount);
 					$("#userMiddleName").html("User "+data.user2Name);
 					$("#userLeftCards").html("Cards left: " + data.user0CardCount);
 					$("#userLeftName").html("User "+data.user0Name);
 					$("#userRightName").html("User "+data.user1Name);
 					$("#userRightCards").html("Cards left: " + data.user1CardCount);
+					if (data.landlordIndex==2){
+						$("#userMiddleLandlord").html("(Landlord)");
+					}else if (data.landlordIndex==0){
+						$("#userLeftLandlord").html("(Landlord)");
+					}else if (data.landlordIndex==1){
+						$("#userRightLandlord").html("(Landlord)");
+					}
+					if(data.currentUserIndex==0){
+						$("#userLeftTimer").html("Time Left: "+data.countdown);
+					}else if(data.currentUserIndex==1){
+						$("#userRightTimer").html("Time Left: "+data.countdown);
+					}
 				}
 				if (data.currentUserIndex == myIndex) {
 					$("#inputArea input").prop('disabled', false);
-					$("#tip").html(data.tip);
+					$("#tip").html("Tip: "+data.tip+"<br>");
+					$("#userMiddleTimer").html("Time Left: "+data.countdown);
 				} else {
 					$("#inputArea input").prop('disabled', true);
 					$("#tip").html("");
 				}
 				if (data.playerMove != playerMove){
 					$("#playerMoves").append("<br>"+data.playerMove);
+					$('#gamespace').animate({scrollTop: $('#gamespace').prop("scrollHeight")}, 200);
 					playerMove = data.playerMove;
+				}
+				if (data.winnerIndex>=0){
+					$("#gameFinished").show();
+					$("#inputArea input").prop('disabled', true);
+				}else{
+					$("#gameFinished").hide();
 				}
 				
 			});
@@ -94,14 +141,21 @@
 					
 					if (data.currentUserIndex == myIndex) {
 						$("#inputArea input").prop('disabled', false);
-						$("#tip").html(data.tip);
+						$("#tip").html("Tip: "+data.tip+"<br>");
 					} else {
 						$("#inputArea input").prop('disabled', true);
 						$("#tip").html("");
 					}
 					if (data.playerMove != playerMove){
 						$("#playerMoves").append("<br>"+data.playerMove);
+						$('#playerMoves').animate({scrollTop: $('#playerMoves').prop("scrollHeight")}, 200);
 						playerMove = data.playerMove;
+					}
+					if (data.winnerIndex>=0){
+						$("#gameFinished").show();
+						$("#inputArea input").prop('disabled', true);
+					}else{
+						$("#gameFinished").hide();
 					}
 					
 					
@@ -117,20 +171,25 @@
 		<div id="playerMoves"></div>
 	</div>
 	<div id="leftuser">
-		<div id="userLeftName"></div>
-		<div id="userRightCards"></div>
+		<div id="userLeftName"></div><div id="userLeftLandlord"></div><br>
+		<div id="userLeftCards"></div>
+		<div id="userLeftTimer"></div>
 	</div>
 	<div id="rightuser">
-		<div id="userLeftName"></div>
+		<div id="userRightName"></div><div id="userRightLandlord"></div><br>
 		<div id="userRightCards"></div>
+		<div id="userRightTimer"></div>
 	</div>
 	<div id="middleuser">
-		<div id="userMiddleName"></div>
-		<div id="cardsArea"></div>
+		<div id="userMiddleName"></div><div id="userMiddleLandlord"></div><br>
+		<div id="cardsArea"></div><br>
 		<div id="inputArea">
-			<div id="tip"></div>
+			<div id="tip"></div><br>
 			<input id="userInput" type="text" name="userInput" placeholder="Your Move:" />
-			<button id="submitInput">Submit</button>
+			<button id="submitInput">Submit</button> <div id="userMiddleTimer"></div>
+		</div>
+		<div id="gameFinished">
+			<a href="waitingroom.jsp">Click Here</a> to return to waitingroom.
 		</div>
 	</div>
 	<div></div>

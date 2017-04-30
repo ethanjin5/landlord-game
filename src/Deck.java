@@ -3,6 +3,7 @@ import java.util.*;
 
 public class Deck {
 	private ArrayList<Card> cards;
+	private ArrayList<Card> usedCards = new ArrayList<Card>();
 	
 	
 	public Deck(){//create a deck of cards
@@ -16,45 +17,81 @@ public class Deck {
 				this.cards.add(card);
 			}
 		}
-		this.cards.add(new Card("J","LJ",14)); //Little Joker
-		this.cards.add(new Card("J","BJ",15)); //Big Joker
+		this.cards.add(new Card("J","L",14)); //Little Joker
+		this.cards.add(new Card("J","B",15)); //Big Joker
+	}
+	public Card getCard(String suit,String rank){
+		for (int i = 0; i<cards.size();i++){
+			if (cards.get(i).getRank().equals(rank) && cards.get(i).getSuit().equals(suit)){
+				return cards.get(i);
+			}
+		}
+		return null;
 	}
 	public ArrayList<Card> getCards(){
 		return this.cards;
+	}
+	public ArrayList<Card> getUsedCards(){
+		return this.usedCards;
+	}
+	public void addUsedCard(Card used){
+		this.usedCards.add(used);
 	}
 	
 	public void shuffle(){
 		Collections.shuffle(this.cards, new SecureRandom());
 	}
 	
-	public static boolean isValidHand(ArrayList<Card> cards){
+	public boolean isValidHand(ArrayList<Card> cards, ArrayList<Card> myCards){
+		for(int i =0; i<cards.size();i++){
+			for (int j=0; j<this.usedCards.size();j++){
+				if (cards.get(i).getRank().equals(usedCards.get(j).getRank()) && 
+						cards.get(i).getSuit().equals(usedCards.get(j).getSuit())){
+					System.out.println("used");
+					return false;
+				}
+			}
+		}
+		//TODO: check if mycards contain all cards
+		for(int i =0; i<cards.size();i++){
+			boolean found = false;
+			for (int j=0; j<myCards.size();j++){
+				if (cards.get(i).getRank().equals(myCards.get(j).getRank()) && 
+						cards.get(i).getSuit().equals(myCards.get(j).getSuit())){
+					found = true;
+				}
+			}
+			if (!found){
+				return false;
+			}
+		}
 		if (isSingle(cards) || isPair(cards) || isThree(cards) || isFullHouse(cards) || isStraight(cards) || isBomb(cards) || isJokerBomb(cards)){
 			return true;
 		}
 		return false;
 	}
 	
-	public static boolean isSingle(ArrayList<Card> cards){
+	public boolean isSingle(ArrayList<Card> cards){
 		if (cards.size()==1){
 			return true;
 		}
 		return false;
 	}
-	public static boolean isPair(ArrayList<Card> cards){
-		if (cards.size()==2 && cards.get(0).getRank() == cards.get(1).getRank()){
+	public boolean isPair(ArrayList<Card> cards){
+		if (cards.size()==2 && cards.get(0).getRank().equals(cards.get(1).getRank())){
 			return true;
 		}
 		return false;
 	}
-	public static boolean isThree(ArrayList<Card> cards){
+	public boolean isThree(ArrayList<Card> cards){
 		if (cards.size()==3 && 
-				(cards.get(0).getRank() == cards.get(1).getRank() && 
-				 cards.get(1).getRank() == cards.get(2).getRank())){
+				(cards.get(0).getRank().equals(cards.get(1).getRank()) && 
+				 cards.get(1).getRank().equals(cards.get(2).getRank()))){
 			return true;
 		}
 		return false;
 	}
-	public static boolean isFullHouse(ArrayList<Card> cards){ //combination of three of a kind + two of a kind
+	public boolean isFullHouse(ArrayList<Card> cards){ //combination of three of a kind + two of a kind
 		if (cards.size()!=5){
 			return false;
 		}
@@ -78,10 +115,10 @@ public class Deck {
 	    }
 	    return false; 
 	}
-	public static boolean isStraight(ArrayList<Card> cards){
+	public boolean isStraight(ArrayList<Card> cards){
 		Collections.sort(cards);
 		for(int i=0;i<cards.size();i++){
-			if (cards.get(i).getRank().equals("BJ") || cards.get(i).getRank().equals("SJ")){
+			if (cards.get(i).getRank().equals("B") || cards.get(i).getRank().equals("L")){
 				return false;
 			}
 		}
@@ -92,24 +129,24 @@ public class Deck {
 		}
 		return true;
 	}
-	public static boolean isBomb(ArrayList<Card> cards){
-		if (cards.size()!=3) {
+	public boolean isBomb(ArrayList<Card> cards){
+		if (cards.size()!=4) {
 			return false;
 		} 
 		for (int i=0; i<cards.size()-1;i++){
-			if (cards.get(i).getRank() != cards.get(i+1).getRank()) {
+			if (!cards.get(i).getRank().equals(cards.get(i+1).getRank())) {
 				return false;
 			}
 		}
 		return true;
 	}
-	public static boolean isJokerBomb(ArrayList<Card> cards){
+	public boolean isJokerBomb(ArrayList<Card> cards){
 		if (cards.size() != 2){
 			return false;
 		}
-		if (cards.get(0).getRank().equals("LJ") && cards.get(1).getRank().equals("BJ")){
+		if (cards.get(0).getRank().equals("L") && cards.get(1).getRank().equals("B")){
 			return true;
-		}else if (cards.get(1).getRank().equals("LJ") && cards.get(0).getRank().equals("BJ")){
+		}else if (cards.get(1).getRank().equals("L") && cards.get(0).getRank().equals("B")){
 			return true;
 		}else{
 			return false;

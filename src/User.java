@@ -54,6 +54,15 @@ public class User {
 	public ArrayList getMyCards() { //user's current cards
 		return myCards;
 	}
+	
+	public void removeCard(Card card){
+		for (int i = 0; i<myCards.size();i++){
+			Card current = (Card)myCards.get(i);
+			if (current.getRank().equals(card.getRank()) && current.getSuit().equals(card.getSuit())){
+				myCards.remove(i);
+			}
+		}
+	}
 
 	public void setMyCards(ArrayList myCards) {
 		this.myCards = myCards;

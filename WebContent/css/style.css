@@ -104,4 +104,8 @@ body {
  #leftuser{background-color:#eee; width:12%; height:30%; float:left}
  #rightuser{background-color:#eee; width:12%; height:30%; float:right}
  #middleuser{background-color:#eee; width:71%; height:30%; margin:0 auto;}
- #gamespace{background-color:yellow; width:80%; height:55%; margin:0 auto;}
+ #gamespace{background-color:yellow; width:80%; height:55%; margin:0 auto;overflow:scroll;}
+ #gameFinished{display:none;}
+ #userMiddleName{float:left;}
+ #userLeftName{float:left;}
+ #userRightName{float:left;}

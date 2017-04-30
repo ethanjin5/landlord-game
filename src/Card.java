@@ -2,7 +2,7 @@
 public class Card implements Comparable<Card>{
 
 private String rank; //rank of the card
-private String suit; //suit of the card : D - Diamond, C - Club, H - Hearts, S - Spade, SJ - small joker, BJ - big joker
+private String suit; //suit of the card : D - Diamond, C - Club, H - Hearts, S - Spade, S - small joker, B - big joker
 private int weight;
 
 public Card(String suit, String rank,int weight){
@@ -37,4 +37,5 @@ public int compareTo(Card a){
 		return -1;
 	}
 }
+
 }
