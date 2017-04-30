@@ -16,7 +16,7 @@
 		if (session.getAttribute("userid") == null) {
 			session.setAttribute("error", "Please Login First");
 			response.sendRedirect(response.encodeRedirectURL("index.jsp"));
-		} else if ((int) session.getAttribute("userid") == 0) {
+		} else if ((Integer) session.getAttribute("userid") == 0) {
 			session.setAttribute("error", "Please Login First");
 			response.sendRedirect(response.encodeRedirectURL("index.jsp"));
 		}
@@ -33,7 +33,9 @@
 				url : "GameServlet",
 				method : "GET"
 			}).done(function(data) {
+				console.log(data);
 				//set cards for this user and counts for other other
+				if (data.gameStarted==1){
 				$("#cardsArea").html("My Cards: " + data.myCards);
 				$("#userLeftTimer").html("");
 				$("#userMiddleTimer").html("");
@@ -129,7 +131,9 @@
 				}else{
 					$("#gameFinished").hide();
 				}
-				
+			}else{
+				$("#playerMoves").html("Waiting for other players to join room to start the game.");
+			}
 			});
 		}
 		$(function(){

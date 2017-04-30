@@ -81,7 +81,7 @@ public class RoomServlet extends HttpServlet {
 							session.setAttribute("myIndex", 2);
 						}
 						System.out.println("Welcome back to the game: "+username+", your userId is: "+userid);
-						System.out.println("yor index is: "+session.getAttribute("myIndex"));
+						System.out.println("your index is: "+session.getAttribute("myIndex"));
 						address = "/gameroom.jsp";
 					}else{
 						if(userNumber==3){
@@ -107,9 +107,6 @@ public class RoomServlet extends HttpServlet {
 								}
 								
 							}
-
-
-
 						}else if(userNumber==1){
 							synchronized (this) {
 								String queryUpdate = "UPDATE room SET user2=?, user2Index=?, usernumber=? where roomid=?";

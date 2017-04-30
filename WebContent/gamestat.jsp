@@ -62,5 +62,16 @@ if(session.getAttribute("userid")==null || session.getAttribute("username")==nul
     </c:forEach>
     </tbody>
 </table>
+<div align="center">
+		<div class="form">
+			<form method="post" action="RoomServlet">
+				<input type="hidden" id="userid" name="userid" value=${userid}>
+				<input type="hidden" id="username" name="username" value=${username}> 
+				
+				<button>Click here to go back</button>
+			</form>
+		</div>
+		
+	</div>
 </body>
 </html>

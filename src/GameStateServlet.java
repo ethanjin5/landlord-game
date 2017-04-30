@@ -53,6 +53,7 @@ public class GameStateServlet extends HttpServlet {
 			session.setAttribute("userid", userid);
 			String username=request.getParameter("username");
 			session.setAttribute("username", username);
+			System.out.println("to search for game statistics, your id: "+userid+", your username: "+username);
 			
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
@@ -74,7 +75,7 @@ public class GameStateServlet extends HttpServlet {
 					int gameId = res.getInt("id");
 					game.setGameId(gameId);
 					game.setUserId(userid);
-					int winnerId = Integer.parseInt(res.getString("winner"));
+					int winnerId = res.getInt("winner");
 					game.setWinOrLose(winnerId==userid?"Yes":"No");
 					
 					String queryMoney = "select * from users where id=?";
@@ -102,7 +103,7 @@ public class GameStateServlet extends HttpServlet {
 				address = "/gamestat.jsp";
 				con.close();
 			}catch(Exception e){
-				System.out.println("Exception in getting the game room: "+e.toString());
+				System.out.println("Exception in getting the game: "+e.toString());
 			}
 			
 			RequestDispatcher dispatcher = request.getRequestDispatcher(address);
