@@ -74,7 +74,8 @@ public class GameStateServlet extends HttpServlet {
 					int gameId = res.getInt("id");
 					game.setGameId(gameId);
 					game.setUserId(userid);
-					game.setWinOrLose(res.getString("winner").equals(username)?"Yes":"No");
+					int winnerId = Integer.parseInt(res.getString("winner"));
+					game.setWinOrLose(winnerId==userid?"Yes":"No");
 					
 					String queryMoney = "select * from users where id=?";
 					PreparedStatement stmtMoney = con.prepareStatement(queryMoney);
