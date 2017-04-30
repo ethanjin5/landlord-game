@@ -16,7 +16,7 @@
 		if (session.getAttribute("userid") == null) {
 			session.setAttribute("error", "Please Login First");
 			response.sendRedirect(response.encodeRedirectURL("index.jsp"));
-		} else if ((int) session.getAttribute("userid") == 0) {
+		} else if ((Integer) session.getAttribute("userid") == 0) {
 			session.setAttribute("error", "Please Login First");
 			response.sendRedirect(response.encodeRedirectURL("index.jsp"));
 		}

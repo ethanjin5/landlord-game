@@ -42,7 +42,7 @@ if(session.getAttribute("userid")==null || session.getAttribute("username")==nul
 		<h1>Landlord Game</h1>
 </div>
 <div class="pen-title h1">
-Please click here to enter a game room.
+Please click here to create or join an existing game room.
 </div>
 <div class="module form-module">
 		<div class="form">
@@ -50,10 +50,9 @@ Please click here to enter a game room.
 				<input type="hidden" id="userid" name="userid" value=${userid}>
 				<input type="hidden" id="username" name="username" value=${username}> 
 				
-				<button>Enter the game room</button>
+				<button>Game room</button>
 			</form>
 		</div>
-		
-	</div>
+</div>
 </body>
 </html>
