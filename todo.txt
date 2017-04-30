@@ -3,7 +3,7 @@ m	length format limit on username,email,phone (done)
 m	add description of strong password (done)
 user session management
 m	implement session idle,absolute timeout
-m	implement cookie attributes(on server with https)
+m	implement cookie attributes(on server with https)  (done)
 waiting room
 m	add userIndex to session after joining room (done)
 game
@@ -11,10 +11,8 @@ f	decide bet
 f	timeout for user to make moves
 f	game logger game id set to use the database
 user status
-m	see the win/loss statistics of themselves and others
-m	interface for user to view stats and game stats, see game moves of completed games
+m	see the win/loss statistics of themselves and others    (for self is done)
+m	interface for user to view stats and game stats, see game moves of completed games (done)
 report
 m	prove mysql is safe, libraries used are safe, no known vulnerabilities
 m	shuffle must be random (...done...)
-
-
