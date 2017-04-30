@@ -193,5 +193,17 @@
 		</div>
 	</div>
 	<div></div>
+	<div align="center">
+		<div class="form">
+			<form method="post" action="GameStateServlet">
+				<input type="hidden" id="userid" name="userid" value=${userid}>
+				<input type="hidden" id="username" name="username" value=${username}> 
+				<input type="hidden" id="myIndex" name="myIndex" value=${myIndex}> 
+				
+				<button>Click here to check game statistics</button>
+			</form>
+		</div>
+		
+	</div>
 </body>
 </html>
