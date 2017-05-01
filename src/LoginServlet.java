@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		String address = "";
 		int userid;
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(true);
 		session.setMaxInactiveInterval(timeoutInSeconds);
 		String sessionid = session.getId();
 		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");

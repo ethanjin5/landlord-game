@@ -32,7 +32,7 @@ public class GameServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(true);
 		session.setMaxInactiveInterval(timeoutInSeconds);
 		String sessionid = session.getId();
 		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
@@ -43,7 +43,8 @@ public class GameServlet extends HttpServlet {
 		
 		ArrayList <User>users = new ArrayList<User>();
 		//get user from room table 
-		if (myGame==null && users.size()<3){
+		synchronized(this){
+		if(myGame==null){
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
 				Connection con = DriverManager
@@ -64,18 +65,22 @@ public class GameServlet extends HttpServlet {
 						users.add(User.getUser(res.getInt("user3")));
 					}
 				}
+				res.close();
+				stmt.close();
+				con.close();
 			} catch (Exception e) {
 				System.out.println(e);
 			}
+		}
 		}
 		if(myGame!=null && myGame.getWinnerIndex()>=0){
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().write(myGame.toJson(userIndex).toString());
 		}
-		else if(users.size()==3 ){
+		else if(myGame == null && users.size()==3 ){
 		synchronized(this){
-		if (myGame==null && users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
+		if (users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
 			GameClient gameclient = new GameClient();
 			ArrayList user1Cards = new ArrayList();
 			ArrayList user2Cards = new ArrayList();
@@ -110,8 +115,9 @@ public class GameServlet extends HttpServlet {
 			}
 			myGame.setGameClient(gameclient);
 			myGame.setBid(100); // default 100 bid 
-		}else{
-			if(myGame!=null){
+		}
+		}
+		}else if (myGame!=null){
 			if (myGame.getCountdown()<=0){
 				User currentUser = (User)myGame.getUsers().get(myGame.getCurrentUserIndex());
 				currentUser.setMyMove("Pass");
@@ -146,9 +152,8 @@ public class GameServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().write(myGame.toJson(userIndex).toString());
-			}
-		}
-		}
+			
+			
 		}else{
 			JSONObject result = new JSONObject();
 			response.setContentType("application/json");
@@ -165,7 +170,7 @@ public class GameServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(true);
 		session.setMaxInactiveInterval(timeoutInSeconds);
 		String sessionid = session.getId();
 		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");

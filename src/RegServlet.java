@@ -36,7 +36,7 @@ public class RegServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String address = "";
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(true);
 		session.setMaxInactiveInterval(timeoutInSeconds);
 		String sessionid = session.getId();
 		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
