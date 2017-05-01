@@ -31,8 +31,8 @@
 			<p>${error}</p>
 			<form method="post" action="RegServlet">
 				<input type="text" name="username" placeholder="Username" /> 
-				<input type="password" name="password1" placeholder="Password" />
-				<input type="password" name="password2" placeholder="Retype Password" />
+				<input type="password" name="password1" placeholder="Password" autocomplete="off"/>
+				<input type="password" name="password2" placeholder="Retype Password" autocomplete="off" />
 				<input type="text" name="email" placeholder="Email Address" />
 				<input type="text" name="phone" placeholder="Phone Number" />
 				<button>Register</button>

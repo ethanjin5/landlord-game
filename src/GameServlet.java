@@ -32,13 +32,13 @@ public class GameServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(timeoutInSeconds);
 		String sessionid = session.getId();
 		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 		int userIndex = -1;  // set to -1, currently 1 for testing
 		if (session.getAttribute("myIndex")!= null && session.getAttribute("myIndex") != ""){
-			userIndex = (int)session.getAttribute("myIndex");
+			userIndex = (int)session.getAttribute("myIndex");			
 		}
 		
 		ArrayList <User>users = new ArrayList<User>();
@@ -78,9 +78,9 @@ public class GameServlet extends HttpServlet {
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().write(myGame.toJson(userIndex).toString());
 		}
-		else if(myGame == null && users.size()==3 ){
+		else if((users.size()==3 && myGame == null) || myGame!=null){
 		synchronized(this){
-		if (users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
+		if (myGame == null && users.get(0)!=null && users.get(1)!=null && users.get(2)!=null){ //initialize game
 			GameClient gameclient = new GameClient();
 			ArrayList user1Cards = new ArrayList();
 			ArrayList user2Cards = new ArrayList();
@@ -115,10 +115,10 @@ public class GameServlet extends HttpServlet {
 			}
 			myGame.setGameClient(gameclient);
 			myGame.setBid(100); // default 100 bid 
-		}
-		}
-		}else if (myGame!=null){
-			if (myGame.getCountdown()<=0){
+		}else {
+			if (myGame !=null){ 
+				if( myGame.getCountdown()<=0){
+			
 				User currentUser = (User)myGame.getUsers().get(myGame.getCurrentUserIndex());
 				currentUser.setMyMove("Pass");
 				StatLogger.log(myGame.getId(),"User "+currentUser.getUsername()+" passed");
@@ -154,6 +154,9 @@ public class GameServlet extends HttpServlet {
 		    response.getWriter().write(myGame.toJson(userIndex).toString());
 			
 			
+		}
+		}
+		}
 		}else{
 			JSONObject result = new JSONObject();
 			response.setContentType("application/json");

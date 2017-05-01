@@ -37,23 +37,24 @@ public class LoginServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		String address = "";
 		int userid;
+		if (request.getSession(false)!=null){
+			request.getSession(false).invalidate();
+		}
 		HttpSession session = request.getSession(true);
 		session.setMaxInactiveInterval(timeoutInSeconds);
-		String sessionid = session.getId();
-		response.setHeader("SET-COOKIE", "JSESSIONID=" + sessionid + "; Secure; HttpOnly");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-//		System.out.println("***&&&&"+username);
+
 		int loginAttempt = 0;
 		if (session.getAttribute("loginAttempt") != null){
 			loginAttempt = (int) session.getAttribute("loginAttempt");
 		}
 		if (loginAttempt <=3 && User.login(username,password)) {
 			userid = User.getUser(username);
-			//System.out.println("***&&&&"+username);
 			session.setAttribute("username", username);
 			session.setAttribute("userid", userid);
 			session.removeAttribute("loginAttempt");
+			session.setAttribute( "login-time", System.currentTimeMillis() );
 			address = "/waitingroom.jsp";
 		} else {
 			address = "/index.jsp";
