@@ -7,7 +7,7 @@ public class User {
 	private String email;
 	private String phone;
 	private String myMove;
-	private ArrayList myCards;
+	private ArrayList<Card> myCards;
 	private int myIndex;
 	private int money;
 	
@@ -51,7 +51,7 @@ public class User {
 		return myIndex+1;
 	}
 
-	public ArrayList getMyCards() { //user's current cards
+	public ArrayList<Card> getMyCards() { //user's current cards
 		return myCards;
 	}
 	
@@ -64,7 +64,7 @@ public class User {
 		}
 	}
 
-	public void setMyCards(ArrayList myCards) {
+	public void setMyCards(ArrayList<Card> myCards) {
 		this.myCards = myCards;
 	}
 	public int getMoney(){
