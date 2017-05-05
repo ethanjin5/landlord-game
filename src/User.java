@@ -1,7 +1,7 @@
 import java.sql.*;
 import java.util.ArrayList;
 
-public class User {
+public final class User {
 	private int userid;
 	private String username;
 	private String email;
