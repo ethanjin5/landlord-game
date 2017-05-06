@@ -10,6 +10,8 @@ public final class User {
 	private ArrayList<Card> myCards;
 	private int myIndex;
 	private int money;
+	private int auth_count;
+	private boolean locked;
 	
 
 	//constructor for creating an user object
@@ -131,6 +133,7 @@ public final class User {
 
 	public static boolean login(String username, String password) {
 		String hashed="";
+		int auth_count = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager
@@ -143,6 +146,7 @@ public final class User {
 			ResultSet res = stmt.executeQuery();
 			if (res.next()){ //user found, get user's password hash
 				hashed = res.getString("password");
+				auth_count = res.getInt("auth_count");
 			}else{//user not found, login fail
 				con.close();
 				return false;
@@ -151,12 +155,51 @@ public final class User {
 		} catch (Exception e) {
 			return false;
 		}
-		//check if password and saved hash match using bcrypt
-		if (!hashed.equals("") && !password.equals("") && BCrypt.checkpw(password, hashed)){
-			return true;//password match, login success
+		
+		if (auth_count<=3){	 //less than three login attempts: allow login
+			//check if password and saved hash match using bcrypt
+			if (!hashed.equals("") && !password.equals("") && BCrypt.checkpw(password, hashed)){
+				try {
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection con = DriverManager
+							.getConnection(
+									"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+									"landlord", "admin");
+					String query = "update users set auth_count = 0 where username = ?";
+					PreparedStatement stmt = con.prepareStatement(query);
+					stmt.setString(1,username);
+					stmt.executeUpdate();
+					stmt.close();
+					con.close();
+				} catch (Exception e) {
+					return false;
+				}
+				return true;//password match, login success
+			}else{
+				try {
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection con = DriverManager
+							.getConnection(
+									"jdbc:mysql://ec2-34-195-151-200.compute-1.amazonaws.com:3306/landlord",
+									"landlord", "admin");
+					String query = "update users set auth_count = auth_count+1 where username = ?";
+					PreparedStatement stmt = con.prepareStatement(query);
+					stmt.setString(1,username);
+					stmt.executeUpdate();
+					stmt.close();
+					con.close();
+				} catch (Exception e) {
+					return false;
+				}
+				return false;
+			}
+		}else{
+			return false; //user is locked out due to more than three unsuccessful login attempt
 		}
-		return false;
+			
+		
 	}
+	
 
 	public static int getUser(String username) {
 		// get user fromm db

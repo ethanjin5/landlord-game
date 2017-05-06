@@ -26,8 +26,6 @@ int userid;
 String error;
 String username;
 
-//System.out.println("----------------"+session.getAttribute("userid"));
-//System.out.println("----------------"+session.getAttribute("username"));
 if(session.getAttribute("userid")==null || session.getAttribute("username")==null){
     session.setAttribute("error", "Please Login First");
     error = "Please Login First";
@@ -36,8 +34,14 @@ if(session.getAttribute("userid")==null || session.getAttribute("username")==nul
 	username = session.getAttribute("username").toString();
 	userid =  Integer.parseInt(session.getAttribute("userid").toString());
 }
+if ((Long)session.getAttribute("login-time")!=null){
+	if (System.currentTimeMillis() - (Long)session.getAttribute("login-time") > 1800000){ //1,800,000 milliseconds = 30 minutes
+		response.sendRedirect(response.encodeRedirectURL("LogoutServlet"));
+	}
+}
 
 %>
+<div><a href="LogoutServlet">Logout</a></div>
 <div class="pen-title">
 		<h1>Landlord Game</h1>
 </div>
