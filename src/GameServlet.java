@@ -132,7 +132,8 @@ public class GameServlet extends HttpServlet {
 						myGame.setCurrentUserIndex(myGame.getLandlordIndex());
 						User landlord = (User)myGame.getUsers().get(myGame.getLandlordIndex());
 						for (int k =0; k<myGame.getLandlordCards().size();k++){
-							landlord.getMyCards().add(myGame.getLandlordCards().get(k));
+							Card card = (Card)myGame.getLandlordCards().get(k);
+							landlord.getMyCards().add(card);
 						}
 						Collections.sort(landlord.getMyCards());
 						myGame.setRequestMove("pickCard");
@@ -237,7 +238,8 @@ public class GameServlet extends HttpServlet {
 						myGame.setCurrentUserIndex(myGame.getLandlordIndex());
 						User landlord = (User)myGame.getUsers().get(myGame.getLandlordIndex());
 						for (int k =0; k<myGame.getLandlordCards().size();k++){
-							landlord.getMyCards().add(myGame.getLandlordCards().get(k));
+							Card card = (Card)myGame.getLandlordCards().get(k);
+							landlord.getMyCards().add(card);
 						}
 						Collections.sort(landlord.getMyCards());
 						myGame.setRequestMove("pickCard");
