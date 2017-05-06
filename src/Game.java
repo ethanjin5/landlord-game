@@ -11,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class Game {
+public final class Game {
 
 	private int id;
 	private int currentUserIndex; //current user who is making a move

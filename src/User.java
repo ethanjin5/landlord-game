@@ -1,13 +1,13 @@
 import java.sql.*;
 import java.util.ArrayList;
 
-public class User {
+public final class User {
 	private int userid;
 	private String username;
 	private String email;
 	private String phone;
 	private String myMove;
-	private ArrayList myCards;
+	private ArrayList<Card> myCards;
 	private int myIndex;
 	private int money;
 	private int auth_count;
@@ -53,7 +53,7 @@ public class User {
 		return myIndex+1;
 	}
 
-	public ArrayList getMyCards() { //user's current cards
+	public ArrayList<Card> getMyCards() { //user's current cards
 		return myCards;
 	}
 	
@@ -66,7 +66,7 @@ public class User {
 		}
 	}
 
-	public void setMyCards(ArrayList myCards) {
+	public void setMyCards(ArrayList<Card> myCards) {
 		this.myCards = myCards;
 	}
 	public int getMoney(){
