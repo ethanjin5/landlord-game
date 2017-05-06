@@ -142,3 +142,6 @@ body {
  #userMiddleName{float:left;}
  #userLeftName{float:left;}
  #userRightName{float:left;}
+ #tip{ margin-top:10px;}
+ #cardsArea{height:60px;}
+ #userInput{float:left;}

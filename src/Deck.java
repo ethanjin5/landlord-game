@@ -47,12 +47,10 @@ public class Deck {
 			for (int j=0; j<this.usedCards.size();j++){
 				if (cards.get(i).getRank().equals(usedCards.get(j).getRank()) && 
 						cards.get(i).getSuit().equals(usedCards.get(j).getSuit())){
-					System.out.println("used");
 					return false;
 				}
 			}
 		}
-		//TODO: check if mycards contain all cards
 		for(int i =0; i<cards.size();i++){
 			boolean found = false;
 			for (int j=0; j<myCards.size();j++){

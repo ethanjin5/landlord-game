@@ -5,12 +5,13 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/cards.css">
 <meta charset="UTF-8">
 <title>Landlord Game</title>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"
 	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 	crossorigin="anonymous"></script>
-</head>
+</head>	
 <body>
 	<%
 		if (session.getAttribute("userid") == null) {
@@ -19,6 +20,11 @@
 		} else if ((Integer) session.getAttribute("userid") == 0) {
 			session.setAttribute("error", "Please Login First");
 			response.sendRedirect(response.encodeRedirectURL("index.jsp"));
+		}
+		if ((Long)session.getAttribute("login-time")!=null){
+			if (System.currentTimeMillis() - (Long)session.getAttribute("login-time") > 1800000){ //1,800,000 milliseconds = 30 minutes
+				response.sendRedirect(response.encodeRedirectURL("LogoutServlet"));
+			}
 		}
 	%>
 	<script>
@@ -33,10 +39,10 @@
 				url : "GameServlet",
 				method : "GET"
 			}).done(function(data) {
-				console.log(data);
 				//set cards for this user and counts for other other
 				if (data.gameStarted==1 || (data.gameStarted ==0 && data.winnerIndex>=0)){
-				$("#cardsArea").html("My Cards: " + data.myCards);
+				$("#cardsArea").html("My Cards: " + displayCards(data.myCards));
+				
 				$("#userLeftTimer").html("");
 				$("#userMiddleTimer").html("");
 				$("#userRightTimer").html("");
@@ -60,7 +66,6 @@
 						$("#userRightLandlord").html("(Landlord)");
 					}
 					if(data.currentUserIndex==1){
-						console.log(data.countdown);
 						$("#userLeftTimer").html("Time Left: "+data.countdown);
 					}else if(data.currentUserIndex==2){
 						$("#userRightTimer").html("Time Left: "+data.countdown);
@@ -136,6 +141,75 @@
 			}
 			});
 		}
+		
+		function displayCards(cards){
+			cards = cards.substr(1,cards.length-2).split(",");
+			var html = "<div class='table playingCards'>";
+			for (var i = 0;i<cards.length;i++){
+				html += "<div class='card rank-"+rank(cards[i])+" "+suit(cards[i])+"'>";
+				html += "<span class='rank'>"+rank2(cards[i])+"</span><span class='suit'>"+suit2(cards[i])+"</span><span style='float:left; margin-top:15px;'>"+cards[i]+"</span></div>";
+			}
+			html += "</div>";
+			return html;
+		}
+		function rank(card){
+			if (card.trim().substring(1) =="B"){
+				return "big";
+			}else if(card.trim().substring(1)=="L"){
+				return "little";
+			}else{
+				return card.trim().substring(1).toLowerCase();
+			}
+		}
+		
+		function rank2(card){
+			if (card.trim().substring(1) =="B"){
+				return "+";
+			}else if(card.trim().substring(1)=="L"){
+				return "-";
+			}else{
+				return card.trim().substring(1);
+			}
+		}
+		
+		function suit(card){
+			switch(card.trim().substring(0,1)){
+			case "D":
+				return "diams";
+				break;
+			case "H":
+				return "hearts";
+				break;
+			case "S":
+				return "spades";
+				break;
+			case "C":
+				return "clubs";
+				break;
+			case "J":
+				return "joker";
+			}
+		}
+		
+		function suit2(card){
+			switch(card.trim().substring(0,1)){
+			case "D":
+				return "&diams;";
+				break;
+			case "H":
+				return "&hearts;";
+				break;
+			case "S":
+				return "&spades;";
+				break;
+			case "C":
+				return "&clubs;";
+				break;
+			case "J":
+				return "Joker";
+			}
+		}
+		
 		$(function(){
 			$("#submitInput").click(function(){
 				$.ajax({
@@ -145,7 +219,7 @@
 				}).done(function(data) {
 					$("#userInput").val("");
 					//set cards for this user and counts for other other
-					$("#cardsArea").html("My Cards: " + data.myCards);
+					$("#cardsArea").html("My Cards: " + displayCards(data.myCards));
 					
 					if (data.myUserIndex == 0){
 						$("#userLeftCards").html("Cards left: " + data.user1CardCount);
@@ -185,7 +259,7 @@
 		})
 		
 	</script>
-
+	<a href="LogoutServlet">Log Out</a>
 	<div id="gamespace">
 		Game Space
 		<div id="playerMoves"></div>
@@ -203,7 +277,7 @@
 		<div id="userRightTimer"></div>
 	</div>
 	<div id="middleuser">
-		<div id="userMiddleName"></div><div id="userMiddleLandlord"></div><br>
+		<div id="userMiddleName"></div><div id="userMiddleLandlord"></div>
 		<div id="userMiddleMoney"></div>
 		<div id="cardsArea"></div><br>
 		<div id="inputArea">

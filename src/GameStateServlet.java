@@ -100,9 +100,7 @@ public class GameStateServlet extends HttpServlet {
 						allMoveString = allMoveString+resStat.getString("move")+";";
 						
 					}
-					game.setGameStatString(allMoveString);
-					System.out.println(game.toString());
-					
+					game.setGameStatString(allMoveString);					
 					gameStats.add(game);
 					
 				}
